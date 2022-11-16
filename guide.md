@@ -1,12 +1,9 @@
-# **Turn Your Python Code Into a pip Package**
+# **Upload to pypi guide**
 
-## Initial Steps
+1. Organize your code into proper file hierarchy
+2. Add a LICENSE and a README.md if not already done
 
-1. Organize your code into the proper file hierarchy
-2. Add your `__init__.py` files
-3. Add a license and a README.md if not already done
-
-####Example
+#### Example
 ```cvs
 /demopackage
     __init__.py
@@ -19,10 +16,8 @@
 LICENSE
 setup.py
 ```
-4. Adding a License
-5. Create your setup.py file
+3. Create your setup.py
 
-####Example
 ```python
 import setuptools
 
@@ -46,22 +41,25 @@ setuptools.setup(
     ),
 )
 ```
-6. Create your Distribution Archive Files
->Before you begin, run the following command to update needed packages:
+4. Create distribution archive files
+>Before you begin, run the following command to update required packages:
   ```python
 pip install --upgrade setuptools wheel
 python setup.py sdist bdist_wheel
 ```
 > This should create a dist/ folder in your main directory with the compressed files for your package!
-7. Upload your distribution archives to PyPI
+5. Upload your distribution archives to PyPI
   ```python
 pip install --upgrade twine
 python setup.py sdist bdist_wheel
 ```
->You will be prompted for your PyPI login credentials, and then the upload will begin. Now you should be able to login to your PyPI account and you will see your package. Notice that PyPI displays your README on the package’s main page, so use that space to give useful information about your library.
+>You will be prompted for your PyPI login credentials, and then the upload will begin. Now you should be able to log in to your PyPI account and see your package.
 
-8. How to use
+6. Usage
   ```python
 pip install login_gmail_selenium
 ```
-call funtion login(email, password, backup_email)
+And then call
+  ```python
+login(email, password, backup_email)
+```

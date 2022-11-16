@@ -7,7 +7,7 @@ setuptools.setup(
     name="login_gmail_selenium",
     version="0.0.1",
     author="Minh Hoang",
-    author_email="nguyenthanhdungktm@gmail.com",
+    author_email="ngminhhoang1412@gmail.com",
     description="A python package for login google by selenium",
     long_description=long_description,
     long_description_content_type="text/markdown",
