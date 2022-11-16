@@ -123,12 +123,9 @@ class ChromeProfile:
         return self.driver
 
     def start(self):
-        self.adjust_viewport()
+        self.retrieve_driver()
         self.check_login_status()
         sleep_for(Constant.SHORT_WAIT)
-
-    def adjust_viewport(self):
-        pass
 
     def handle_false_email(self, text):
         pass

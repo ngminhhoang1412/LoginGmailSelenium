@@ -1,5 +1,11 @@
 .idea/
+__pycache__/
+.venv/
+.vscode/
+temp/
+config/
+config/.env_test
+login_gmail_selenium.egg-info/
 .*
 !/.gitignore
-
 
