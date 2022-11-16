@@ -59,3 +59,9 @@ pip install --upgrade twine
 python setup.py sdist bdist_wheel
 ```
 >You will be prompted for your PyPI login credentials, and then the upload will begin. Now you should be able to login to your PyPI account and you will see your package. Notice that PyPI displays your README on the package’s main page, so use that space to give useful information about your library.
+
+8. How to use
+  ```python
+pip install login_gmail_selenium
+```
+call funtion login(email, password, backup_email)
