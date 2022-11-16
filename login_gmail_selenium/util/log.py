@@ -1,6 +1,6 @@
 import sys
 import logging
-import TeraBoxUtility.common.constant as Constant
+import login_gmail_selenium.common.constant as Constant
 
 logger = logging.getLogger(__name__)
 

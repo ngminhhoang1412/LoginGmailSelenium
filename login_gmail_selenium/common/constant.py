@@ -16,20 +16,6 @@ VERY_SHORT_WAIT = [0, 1]
 LONG_WAIT = [20, 40]
 WIDE_WAIT = [1, 10]
 PASTE_PERCENTAGE = 50
-WAIT_RELOAD = 10
-WAIT_DOWNLOAD = 6
-
-
-class Colors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKCYAN = '\033[96m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
 
 
 def resource_path(relative_path):

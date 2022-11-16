@@ -1,12 +1,7 @@
-import os
 import random
-import shutil
-import zipfile
 
 import requests
 import math
-
-from cryptography.fernet import Fernet
 
 import login_gmail_selenium.common.constant as Constant
 from selenium.webdriver.common.keys import Keys
@@ -21,10 +16,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 def sleep_for(period):
     sleep(randint(period[0], period[1]))
-
-
-def get_random_number(period):
-    return randint(period[0], period[1])
 
 
 def scroll_to_element(driver, element, retry=Constant.RETRY):
@@ -51,11 +42,6 @@ def type_text(driver, text, xpath, custom_enter=None, paste_text=Constant.PASTE_
             input_keyword.send_keys(letter)
             sleep(uniform(.1, .4))
 
-    # TODO: improve later with this block, search icon can be unable to find
-    # if random.choice([True, False]) and (custom_enter is not None):
-    #     icon = driver.find_element(By.XPATH, )
-    #     ensure_click(driver, icon)
-    # else:
     input_keyword.send_keys(Keys.ENTER)
 
     sleep_for(Constant.SHORT_WAIT)
@@ -126,39 +112,3 @@ def random_scroll(driver):
                                 Keys.F11, Keys.ARROW_DOWN, Keys.ARROW_UP, Keys.F5])
         driver.find_element(By.TAG_NAME, 'body').send_keys(action)
 
-
-def encrypt_file(file_path):
-    key = Constant.env["KEY"]
-    key = key.encode('utf-8')
-    fernet = Fernet(key)
-    with open(file_path, 'rb') as file:
-        original = file.read()
-
-    encrypted = fernet.encrypt(original)
-    with open(file_path, 'wb') as encrypted_file:
-        encrypted_file.write(encrypted)
-
-
-def delete(path):
-    if os.path.isfile(path) or os.path.islink(path):
-        os.remove(path)
-    elif os.path.isdir(path):
-        shutil.rmtree(path)
-    else:
-        raise ValueError("Path {} is not a file or dir.".format(path))
-
-
-def unzip(in_path, out_path):
-    with zipfile.ZipFile(in_path, "r") as zip_ref:
-        zip_ref.extractall(out_path)
-
-
-def decrypt(path):
-    key = Constant.env["KEY"]
-    key = key.encode('utf-8')
-    fernet = Fernet(key)
-    with open(path, 'rb') as enc_file:
-        encrypted = enc_file.read()
-    decrypted = fernet.decrypt(encrypted)
-    with open(path, 'wb') as dec_file:
-        dec_file.write(decrypted)
