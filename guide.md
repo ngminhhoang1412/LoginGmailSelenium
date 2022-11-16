@@ -3,7 +3,6 @@
 1. Organize your code into proper file hierarchy
 2. Add a LICENSE and a README.md if not already done
 
-#### Example
 ```cvs
 /demopackage
     __init__.py
