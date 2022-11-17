@@ -8,6 +8,8 @@ config/.env_test
 login_gmail_selenium.egg-info/
 build/
 dist/
+login_gmail_selenium/util/__pycache__/
+login_gmail_selenium/common/__pycache__/
 .*
 !/.gitignore
 
