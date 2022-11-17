@@ -4,22 +4,42 @@
 This is a small package to log in to Google account with Selenium. After signin,
 Chrome profile of that user will be create and stored. With Chrome profile you can do so many automatic things
 with it.
+
+Always active extension is installed by default.
 >This has been developed for testing purposes only.
 > Any action you take using this script is strictly at your own risk. 
 > I will not be liable for any losses or damages you face using this script.
 
 ## Requirement
-Must have Python <= 3.9 and Google Chrome installed
+Must have Python <= 3.9 and Google Chrome installed.
 
 ## Usage
   ```python
 pip install login_gmail_selenium
 ```
-And then call
+And then on example.py
   ```python
-login(email, password, backup_email)
+from login_gmail_selenium.util.profile import ChromeProfile
+
+profile = login(email, password, backup_email)
+driver = profile.retrieve_driver()
+profile.start()
+# Do whatever with driver afterward
+driver.get('https://www.google.com/')
+...
 ```
-> Add folder extension/ if you want custom extensions for Chrome (.crx or .zip)
+Add folder extension/ if you want custom extensions for Chrome (.crx or .zip). 
+Your folder should look like this
+```cvs
+/temp
+    /profiles
+      /profile1
+      /profile2
+/extension
+    extension1.zip
+    extension2.crx
+example.py
+```
 
 ## Upload to pypi
 
@@ -74,7 +94,6 @@ This should create a dist/ folder in your main directory with the compressed fil
 5. Upload your distribution archives to PyPI
   ```python
 pip install --upgrade twine
-python setup.py sdist bdist_wheel
 twine upload dist/*
 ```
 You will be prompted for your PyPI login credentials, and then the upload will begin. Now you should be able to log in to your PyPI account and see your package.
