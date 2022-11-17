@@ -19,6 +19,7 @@ And then call
   ```python
 login(email, password, backup_email)
 ```
+> Add folder extension/ if you want custom extensions for Chrome (.crx or .zip)
 
 ## Upload to pypi
 

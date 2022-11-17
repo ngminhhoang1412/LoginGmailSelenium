@@ -1,5 +1,6 @@
 import undetected_chromedriver as uc2
 import os
+from glob import glob
 import login_gmail_selenium.common.constant as Constant
 from login_gmail_selenium.util.helper import type_text, sleep_for, ensure_click
 from selenium.webdriver.chrome.service import Service
@@ -7,13 +8,17 @@ from selenium.webdriver.common.by import By
 import selenium.webdriver.support.expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
+import login_gmail_selenium.extension
+
+CUSTOM_EXTENSIONS = glob(os.path.join('extension', '*.zip')) + \
+                    glob(os.path.join('extension', '*.crx'))
 
 
 class ChromeProfile:
-
     VIEWPORTS = ['2560,1440', '1920,1080', '1440,900',
                  '1536,864', '1366,768', '1280,1024', '1024,768']
-    ACTIVE = os.path.join('extension', 'always_active.zip')
+    dirname = os.path.abspath(__file__ + "/../../")
+    ACTIVE = os.path.join(dirname, 'extension', 'always_active.zip')
 
     def __init__(self, email, password, backup_email):
         self.email = email
@@ -41,6 +46,8 @@ class ChromeProfile:
         }
         options.add_experimental_option("prefs", prefs)
         options.add_extension(self.ACTIVE)
+        for extension in CUSTOM_EXTENSIONS:
+            options.add_extension(extension)
 
         service = Service(executable_path=Constant.PATCHED_DRIVER)
         return uc2.Chrome(options=options)
