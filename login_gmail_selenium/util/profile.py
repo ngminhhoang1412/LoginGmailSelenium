@@ -2,18 +2,23 @@ import undetected_chromedriver as uc2
 import os
 import common.constant as Constant
 from util.helper import type_text, sleep_for, ensure_click, get_version
+from glob import glob
+from login_gmail_selenium.util.helper import type_text, sleep_for, ensure_click
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 import selenium.webdriver.support.expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
+CUSTOM_EXTENSIONS = glob(os.path.join('extension', '*.zip')) + \
+                    glob(os.path.join('extension', '*.crx'))
+
 
 class ChromeProfile:
-
     VIEWPORTS = ['2560,1440', '1920,1080', '1440,900',
                  '1536,864', '1366,768', '1280,1024', '1024,768']
-    ACTIVE = os.path.join('extension', 'always_active.zip')
+    dirname = os.path.abspath(__file__ + "/../../")
+    ACTIVE = os.path.join(dirname, 'extension', 'always_active.zip')
 
     def __init__(self, email, password, backup_email):
         self.email = email
@@ -63,15 +68,15 @@ class ChromeProfile:
         driver = self.driver
         driver.get("https://accounts.google.com/signin/v2/identifier?flowName=GlifWebSignIn&flowEntry=ServiceLogin")
         username_xpath = '//*[@id="identifierId"]'
+        login_text_retrieve_script = 'return document.querySelector("input[type=\'email\']");'
         try:
             # First time login on device, type username
-            type_text(driver=self.driver, text=self.email, xpath=username_xpath, loading=True, paste_text=100)
-            for x in range(Constant.RETRY):
-                if not "challenge" in driver.current_url:
-                    type_text(driver=self.driver, text=self.email, xpath=username_xpath, loading=True, paste_text=100)
-                else:
-                    break
-        except TimeoutException:
+            type_text(driver=self.driver, text=self.email, xpath=username_xpath, loading=True,
+                      script=login_text_retrieve_script)
+        except NoSuchElementException:
+            # TODO: this site can't be reach
+            raise
+        except Exception:
             # Profile already has at least 1 username, choose profile with correct email
             if "signinchooser" in driver.current_url:
                 desired_profile = driver.find_elements_by_xpath(f"//*[contains(text(), '{self.email}')]")
@@ -81,27 +86,26 @@ class ChromeProfile:
                     new_profile_xpath = "//*[@id=\"view_container\"]/div/div/div[2]/div/div[1]/div/form/span/" \
                                         "section/div/div/div/div/ul/li[2]"
                     driver.find_elements_by_xpath(new_profile_xpath)[0].click()
-                    type_text(driver=self.driver, text=self.email, xpath=username_xpath, loading=True, paste_text=100)
+                    type_text(driver=self.driver, text=self.email, xpath=username_xpath, loading=True,
+                              script=login_text_retrieve_script)
             # Account has been logged in from another device
             elif "webreauth" in driver.current_url:
                 continue_xpath = "//*[@id=\"identifierNext\"]/div/button"
                 driver.find_element(By.XPATH, continue_xpath).click()
             else:
                 # Usually internet/proxy issue here so will be raised TimeoutException
-                raise TimeoutException("This site can't be reached")
+                raise
+
+        # Mail address incorrectly typed, this is caused by Selenium itself (I guess), fix not required
+        if 'identifier' in driver.current_url:
+            raise ValueError("Selenium failed to type username")
+
         self.check_challenge()
         # If no problem or challenge occurs, proceed to type password
+        password_text_retrieve_script = 'return document.querySelector("input[type=\'password\']");'
         password_xpath = '//*[@id="password"]/div[1]/div/div[1]/input'
-        '//*[@id="password"]/div[1]/div/div[1]/input'
-        type_text(driver=self.driver, text=self.password, xpath=password_xpath, loading=True, paste_text=100)
-        error_xpath = '//*[@id="view_container"]/div/div/div[2]/div/div[1]/div/form/span/section/div/div/div[2]/div[2]'
-        error = None
-        try:
-            error = driver.find_element(By.XPATH, error_xpath)
-        except (NoSuchElementException, TimeoutException):
-            pass
-        if error:
-            self.handle_false_email('Either password changed or something is wrong with account')
+        type_text(driver=self.driver, text=self.password, xpath=password_xpath, loading=True, refresh=True,
+                  script=password_text_retrieve_script)
         self.check_challenge()
 
     def check_challenge(self):
@@ -109,20 +113,26 @@ class ChromeProfile:
         # Bypass when google ask for backup email
         if 'challenge/selection' in driver.current_url:
             path = '//*[@id="view_container"]/div/div/div[2]/div/div[1]/div/form/span/section/div/div/div/ul/li[3]'
-            ensure_click(self.driver, path)
+            backup_email_click_script = '''
+            document.querySelectorAll('form span section div div div ul li')[2].childNodes[0].click();
+            '''
+            ensure_click(self.driver, path, script=backup_email_click_script)
             backup_xpath = '//*[@id=\"knowledge-preregistered-email-response\"]'
-            type_text(driver=self.driver, text=self.backup_email, xpath=backup_xpath, loading=True)
+            backup_email_type_script = 'return document.querySelector("input[type=\'email\']");'
+            type_text(driver=self.driver, text=self.backup_email, xpath=backup_xpath, loading=True,
+                      script=backup_email_type_script)
         elif 'disabled/explanation' in driver.current_url:
             self.handle_false_email('Account disabled')
-        # TODO: still 2 more cases to handle: number sent to phone & phone required to login
+        elif 'speedbump' in driver.current_url:
+            # speedbump/changepassword -> require changing password ???
+            # speedbump/idvreenable -> require phone verification ???
+            self.handle_false_email('Account required verification steps')
 
     def retrieve_driver(self):
         self.driver = self.create_driver()
-
         return self.driver
 
     def start(self):
-        self.retrieve_driver()
         self.check_login_status()
         sleep_for(Constant.SHORT_WAIT)
 

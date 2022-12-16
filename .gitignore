@@ -5,6 +5,10 @@ __pycache__/
 temp/
 config/
 config/.env_test
+build/
+dist/
+login_gmail_selenium/util/__pycache__/
+login_gmail_selenium/common/__pycache__/
 .*
 !/.gitignore
 
