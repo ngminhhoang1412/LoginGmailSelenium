@@ -1,7 +1,7 @@
 import random
 import math
 import os
-import common.constant as Constant
+import login_gmail_selenium.common.constant as Constant
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver.common.by import By

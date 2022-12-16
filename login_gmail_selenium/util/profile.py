@@ -1,7 +1,7 @@
 import undetected_chromedriver as uc2
 import os
-import common.constant as Constant
-from util.helper import type_text, sleep_for, ensure_click, get_version
+import login_gmail_selenium.common.constant as Constant
+from login_gmail_selenium.util.helper import type_text, sleep_for, ensure_click, get_version
 from glob import glob
 from login_gmail_selenium.util.helper import type_text, sleep_for, ensure_click
 from selenium.webdriver.chrome.service import Service
