@@ -14,11 +14,11 @@ Always active extension is installed by default.
 Must have Python <= 3.9 and Google Chrome installed.
 
 ## Usage
-  ```python
+```pycon
 pip install login_gmail_selenium
 ```
 And then on example.py
-  ```python
+```pycon
 from login_gmail_selenium.util.profile import ChromeProfile
 
 profile = login(email, password, backup_email)
@@ -58,45 +58,25 @@ example.py
 LICENSE
 setup.py
 ```
-3. Create your setup.py
+3. Create (if not have) and check for version on setup.py
 
-```python
-import setuptools
+4. Generate distribution archive files
 
-with open("README.md", "r") as fh:
-    long_description = fh.read()
-
-setuptools.setup(
-    name="login_gmail_selenium",
-    version="0.0.1",
-    author="Minh Hoang",
-    author_email="nguyenthanhdungktm@gmail.com",
-    description="A python package for login google by selenium",
-    long_description=long_description,
-    long_description_content_type="text/markdown",
-    url="https://github.com/ngminhhoang1412/LoginGmailSelenium",
-    packages=setuptools.find_packages(),
-    classifiers=(
-        "Programming Language :: Python :: 3.9",
-        "Operating System :: OS Independent",
-        "License :: OSI Approved :: MIT License"
-    ),
-)
-```
-4. Create distribution archive files
-
-Before you begin, run the following command to update required packages:
-  ```python
+```pycon
 pip install --upgrade setuptools wheel
 python setup.py sdist bdist_wheel
 ```
-This should create a dist/ folder in your main directory with the compressed files for your package!
+This should create a dist/ and build/ folder in your main directory with the compressed files of your package!
 5. Upload your distribution archives to PyPI
-  ```python
+```pycon
 pip install --upgrade twine
 twine upload dist/*
 ```
-You will be prompted for your PyPI login credentials, and then the upload will begin. Now you should be able to log in to your PyPI account and see your package.
+You will be prompted for your PyPI login credentials, and then the upload will begin. 
+Now you should be able to log in to your PyPI account and see your package.
 
 ## License
-Copyright © 2022 MoliGroup, [MIT licensed](./LICENSE).
+Copyright © 2022 [MoliGroup](https://moligroup.co/), [MIT license](./LICENSE).
+
+For work information please contact ngminhhoang1412@gmail.com or 
+[LinkedIn](https://www.linkedin.com/in/ho%C3%A0ng-nguy%E1%BB%85n-1b13481b7/).
