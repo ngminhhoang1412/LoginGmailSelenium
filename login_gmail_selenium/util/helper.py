@@ -1,7 +1,7 @@
 import random
 import math
-
-from login_gmail_selenium.common import constant as Constant
+import os
+import login_gmail_selenium.common.constant as Constant
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver.common.by import By
@@ -115,3 +115,20 @@ def ensure_find_element(driver, xpath):
         return driver.find_element(By.XPATH, xpath)
 
     return execute_with_retry(driver, get_element, with_result=True)
+
+def get_version(path='C:\Program Files\Google\Chrome\Application'):
+    """
+
+    Args:
+       path: link to Chrome Application
+    """
+    try:
+        subfolders = [f.name for f in os.scandir(path) if f.is_dir()]
+        for folder in subfolders:
+            version = folder.split('.')[0]
+            if version.isnumeric():
+                bit = 1
+                return version
+    except:
+        return 0
+

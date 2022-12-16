@@ -5,7 +5,6 @@ __pycache__/
 temp/
 config/
 config/.env_test
-login_gmail_selenium.egg-info/
 build/
 dist/
 login_gmail_selenium/util/__pycache__/
