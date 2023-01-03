@@ -1,7 +1,8 @@
 import undetected_chromedriver as uc2
 import os
-from glob import glob
 import login_gmail_selenium.common.constant as Constant
+from login_gmail_selenium.util.helper import type_text, sleep_for, ensure_click, get_version
+from glob import glob
 from login_gmail_selenium.util.helper import type_text, sleep_for, ensure_click
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
@@ -45,12 +46,8 @@ class ChromeProfile:
         }
         options.add_experimental_option("prefs", prefs)
         options.add_extension(self.ACTIVE)
-        # for extension in CUSTOM_EXTENSIONS:
-        #     options.add_extension(extension)
-
-        # TODO: will finish here later
         service = Service(executable_path=Constant.PATCHED_DRIVER)
-        return uc2.Chrome(options=options)
+        return uc2.Chrome(options=options, version_main=get_version())
 
     def check_login_status(self):
         self.driver.get("https://accounts.google.com/")
