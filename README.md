@@ -21,7 +21,8 @@ And then on example.py
 ```pycon
 from login_gmail_selenium.util.profile import ChromeProfile
 
-profile = login(email, password, backup_email)
+profile = ChromeProfile(email, password, backup_email)
+# To allow downloads add insecure=True to ChromeProfile
 driver = profile.retrieve_driver()
 profile.start()
 # Do whatever with driver afterward
@@ -76,7 +77,8 @@ You will be prompted for your PyPI login credentials, and then the upload will b
 Now you should be able to log in to your PyPI account and see your package.
 
 ## License
-Copyright © 2022 [MoliGroup](https://moligroup.co/), [MIT license](./LICENSE).
+Copyright © 2022 [MoliGroup](https://moligroup.co/), [MIT license](./LICENSE). 
+For an improvement or a bug please feel free to open a PR
 
 For work information please contact ngminhhoang1412@gmail.com or 
 [LinkedIn](https://www.linkedin.com/in/ho%C3%A0ng-nguy%E1%BB%85n-1b13481b7/).
