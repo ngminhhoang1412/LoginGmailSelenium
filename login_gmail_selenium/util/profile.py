@@ -20,11 +20,12 @@ class ChromeProfile:
     dirname = os.path.abspath(__file__ + "/../../")
     ACTIVE = os.path.join(dirname, 'extension', 'always_active.zip')
 
-    def __init__(self, email, password, backup_email):
+    def __init__(self, email, password, backup_email, insecure=False):
         self.email = email
         self.password = password
         self.backup_email = backup_email
         self.driver = None
+        self.insecure = insecure
 
     def create_driver(self):
 
@@ -33,8 +34,9 @@ class ChromeProfile:
         options.add_argument(f"--user-data-dir={path}")
         options.add_argument(f"--profile-directory={self.email}")
         options.add_argument("--start-maximized")
-        options.add_argument("--disable-web-security")
-        options.add_argument("--allow-running-insecure-content")
+        if self.insecure:
+            options.add_argument("--disable-web-security")
+            options.add_argument("--allow-running-insecure-content")
         prefs = {
             "intl.accept_languages": 'en_US,en',
             "credentials_enable_service": False,
