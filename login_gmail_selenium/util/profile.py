@@ -3,13 +3,17 @@ import os
 import login_gmail_selenium.common.constant as Constant
 from login_gmail_selenium.util.helper import type_text, sleep_for, ensure_click, get_version
 from glob import glob
-from login_gmail_selenium.util.helper import type_text, sleep_for, ensure_click
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 import selenium.webdriver.support.expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from login_gmail_selenium.common.log import log_false_email
 
+WEBRTC = os.path.join('extension', 'webrtc_control.zip')
+ACTIVE = os.path.join('extension', 'always_active.zip')
+FINGERPRINT = os.path.join('extension', 'fingerprint_defender.zip')
+TIMEZONE = os.path.join('extension', 'spoof_timezone.zip')
 CUSTOM_EXTENSIONS = glob(os.path.join('extension', '*.zip')) + \
                     glob(os.path.join('extension', '*.crx'))
 
@@ -18,21 +22,29 @@ class ChromeProfile:
     VIEWPORTS = ['2560,1440', '1920,1080', '1440,900',
                  '1536,864', '1366,768', '1280,1024', '1024,768']
     dirname = os.path.abspath(__file__ + "/../../")
-    ACTIVE = os.path.join(dirname, 'extension', 'always_active.zip')
 
-    def __init__(self, email, password, backup_email, insecure=False):
+    def __init__(self, email, password, backup_email, auth_type=None, path=None,
+                 prox=None, prox_type=None, proxy_folder=None, is_disk_available=True, insecure=False):
         self.email = email
         self.password = password
         self.backup_email = backup_email
+        self.proxy_folder = proxy_folder
+        self.auth_type = auth_type
+        self.path = path
+        self.proxy = prox or "empty"
+        self.proxy_type = prox_type
         self.driver = None
+        self.is_disk_available = is_disk_available
         self.insecure = insecure
 
     def create_driver(self):
-
         options = uc2.ChromeOptions()
         path = os.path.join(Constant.PROFILE_FOLDER, self.email)
-        options.add_argument(f"--user-data-dir={path}")
-        options.add_argument(f"--profile-directory={self.email}")
+        if self.is_disk_available or os.path.isdir(path):
+            # If disk space is still available then create a new Chrome profile
+            # or the Chrome profile already exist then use it
+            options.add_argument(f"--user-data-dir={path}")
+            options.add_argument(f"--profile-directory={self.email}")
         options.add_argument("--start-maximized")
         if self.insecure:
             options.add_argument("--disable-web-security")
@@ -45,11 +57,27 @@ class ChromeProfile:
             "download_restrictions": 3,
             "profile.exit_type": "Normal",
             "profile.exited_cleanly": True,
+            "profile.default_content_setting_values.geolocation": 1
         }
         options.add_experimental_option("prefs", prefs)
-        options.add_extension(self.ACTIVE)
+        options.add_extension(WEBRTC)
+        options.add_extension(FINGERPRINT)
+        options.add_extension(TIMEZONE)
+        options.add_extension(ACTIVE)
+        if CUSTOM_EXTENSIONS:
+            for extension in CUSTOM_EXTENSIONS:
+                options.add_extension(extension)
+
+        # Either private proxy, public proxy or no proxy at all
+        if self.auth_type == 'private':
+            self.create_proxy_folder()
+            options.add_argument(f"--load-extension={self.proxy_folder}")
+        elif self.auth_type == 'public':
+            options.add_argument(f'--proxy-server={self.proxy_type}://{self.proxy}')
+        else:
+            options.add_argument('--no-proxy-server')
         service = Service(executable_path=Constant.PATCHED_DRIVER)
-        return uc2.Chrome(options=options, version_main=get_version())
+        return uc2.Chrome(service=service, options=options, version_main=get_version())
 
     def check_login_status(self):
         self.driver.get("https://accounts.google.com/")
@@ -125,9 +153,13 @@ class ChromeProfile:
                       script=backup_email_type_script)
         elif 'disabled/explanation' in driver.current_url:
             self.handle_false_email('Account disabled')
-        elif 'speedbump' in driver.current_url:
+        elif 'speedbump' in driver.current_url or \
+                'challenge/sk/presend' in driver.current_url or \
+                'challenge/dp' in driver.current_url:
             # speedbump/changepassword -> require changing password ???
             # speedbump/idvreenable -> require phone verification ???
+            # challenge/sk/presend -> require phone verification ???
+            # challenge/dp -> select a number ???
             self.handle_false_email('Account required verification steps')
 
     def retrieve_driver(self):
@@ -139,4 +171,66 @@ class ChromeProfile:
         sleep_for(Constant.SHORT_WAIT)
 
     def handle_false_email(self, text):
-        pass
+        # Raise error, noted the email and exit the flow
+        log_false_email(f"{text}: <{self.email}:{self.password}:{self.backup_email}>")
+        raise ValueError(f"{text} ({self.email})")
+
+    def create_proxy_folder(self):
+        proxy_string = self.proxy
+        proxy = proxy_string.replace('@', ':')
+        proxy = proxy.split(':')
+        manifest_json = """
+        {
+            "version": "1.0.0",
+            "manifest_version": 2,
+            "name": "Chrome Proxy",
+            "permissions": [
+                "proxy",
+                "tabs",
+                "unlimitedStorage",
+                "storage",
+                "<all_urls>",
+                "webRequest",
+                "webRequestBlocking"
+            ],
+            "background": {
+                "scripts": ["background.js"]
+            },
+            "minimum_chrome_version":"22.0.0"
+        }
+         """
+
+        background_js = """
+        var config = {
+                mode: "fixed_servers",
+                rules: {
+                singleProxy: {
+                    scheme: "http",
+                    host: "%s",
+                    port: parseInt(%s)
+                },
+                bypassList: ["localhost"]
+                }
+            };
+        chrome.proxy.settings.set({value: config, scope: "regular"}, function() {});
+        function callbackFn(details) {
+            return {
+                authCredentials: {
+                    username: "%s",
+                    password: "%s"
+                }
+            };
+        }
+        chrome.webRequest.onAuthRequired.addListener(
+                    callbackFn,
+                    {urls: ["<all_urls>"]},
+                    ['blocking']
+        );
+        """ % (proxy[2], proxy[-1], proxy[0], proxy[1])
+
+        os.makedirs(self.proxy_folder, exist_ok=True)
+        with open(os.path.join(self.proxy_folder, "manifest.json"), 'w') as fh:
+            fh.write(manifest_json)
+
+        with open(os.path.join(self.proxy_folder, "background.js"), 'w') as fh:
+            fh.write(background_js)
