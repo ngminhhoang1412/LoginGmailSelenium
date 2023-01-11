@@ -186,8 +186,10 @@ class ChromeProfile:
         self.check_login_status()
         sleep_for(Constant.SHORT_WAIT)
 
-    def handle_false_email(self, text):
+    def handle_false_email(self, text, callback=None):
         # Raise error, noted the email and exit the flow
+        if callback != None:
+            callback
         log_false_email(f"{text}: <{self.email}:{self.password}:{self.backup_email}>")
         raise ValueError(f"{text} ({self.email})")
 
