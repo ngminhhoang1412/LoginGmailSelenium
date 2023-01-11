@@ -138,6 +138,22 @@ class ChromeProfile:
                   script=password_text_retrieve_script)
         self.check_challenge()
 
+        if 'challenge/pwd' in driver.current_url:
+            # Something happens to the account
+            get_error_div_script = "return document.querySelectorAll('form > span > " \
+                                   "div > div[aria-live]')[0].childNodes;"
+            error_div = driver.execute_script(get_error_div_script)
+            if error_div:
+                get_error_msg_script = "return document.querySelectorAll('form > span > div > div[aria-live]')[0]." \
+                                       "childNodes[1].firstChild.textContent;"
+                error_msg = driver.execute_script(get_error_msg_script)
+                self.handle_false_email(f"Google error: {error_msg}")
+            # Selenium failed to type password
+            raise ValueError("Selenium failed to type password")
+        self.check_challenge()
+        # TODO: still need to handle 1 more case here, when everything is finished,
+        #  need to check on account.google to see if logged in or not
+
     def check_challenge(self):
         driver = self.driver
         # Bypass when google ask for backup email

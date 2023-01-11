@@ -1,5 +1,3 @@
-import sys
-import logging
 import login_gmail_selenium.common.constant as Constant
 from datetime import *
 
