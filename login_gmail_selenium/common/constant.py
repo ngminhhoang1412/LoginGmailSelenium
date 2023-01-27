@@ -1,5 +1,6 @@
 import os
 import sys
+import dotenv
 
 
 # NOTE: Global constants
@@ -28,8 +29,6 @@ def resource_path(relative_path):
 
 # NOTE: Configuration
 CWD = resource_path("")
-CONFIG_FOLDER = resource_path("config")
-env_location = os.path.join(CONFIG_FOLDER, '.env_test')
 
 TEMP_FOLDER = resource_path("temp")
 os.makedirs(TEMP_FOLDER, exist_ok=True)
