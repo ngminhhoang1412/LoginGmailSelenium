@@ -21,7 +21,6 @@ CUSTOM_EXTENSIONS = glob(os.path.join('extension', '*.zip')) + \
 class ChromeProfile:
     VIEWPORTS = ['2560,1440', '1920,1080', '1440,900',
                  '1536,864', '1366,768', '1280,1024', '1024,768']
-    dirname = os.path.abspath(__file__ + "/../../")
 
     def __init__(self, email, password, backup_email, auth_type=None, path=None,
                  prox=None, prox_type=None, proxy_folder=None, is_disk_available=True, insecure=False):
@@ -87,7 +86,8 @@ class ChromeProfile:
                 (By.XPATH, username_xpath)))
             username = self.driver.find_element(By.XPATH, username_xpath)
             if username:
-                print(username.text)
+                pass
+                # print(username.text)
             else:
                 raise ValueError(f"Stuck at my account home page {self.email}")
         except TimeoutException:
@@ -102,7 +102,7 @@ class ChromeProfile:
         try:
             # First time login on device, type username
             type_text(driver=self.driver, text=self.email, xpath=username_xpath, loading=True,
-                      script=login_text_retrieve_script, paste_text=100)
+                      script=login_text_retrieve_script)
         except NoSuchElementException:
             # TODO: this site can't be reach
             raise
@@ -186,13 +186,6 @@ class ChromeProfile:
         self.check_login_status()
         sleep_for(Constant.SHORT_WAIT)
 
-    def handle_false_email(self, text, callback=None):
-        # Raise error, noted the email and exit the flow
-        if callback != None:
-            callback
-        log_false_email(f"{text}: <{self.email}:{self.password}:{self.backup_email}>")
-        raise ValueError(f"{text} ({self.email})")
-
     def create_proxy_folder(self):
         proxy_string = self.proxy
         proxy = proxy_string.replace('@', ':')
@@ -252,3 +245,10 @@ class ChromeProfile:
 
         with open(os.path.join(self.proxy_folder, "background.js"), 'w') as fh:
             fh.write(background_js)
+
+    def handle_false_email(self, text, callback=None):
+        # Raise error, noted the email and exit the flow
+        if callback is not None:
+            callback()
+        log_false_email(f"{text}: <{self.email}:{self.password}:{self.backup_email}>")
+        raise ValueError(f"{text} ({self.email})")
