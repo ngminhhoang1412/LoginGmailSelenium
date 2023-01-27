@@ -14,11 +14,12 @@ WEBRTC = os.path.join('extension', 'webrtc_control.zip')
 ACTIVE = os.path.join('extension', 'always_active.zip')
 FINGERPRINT = os.path.join('extension', 'fingerprint_defender.zip')
 TIMEZONE = os.path.join('extension', 'spoof_timezone.zip')
-CUSTOM_EXTENSIONS = glob(os.path.join('extension', '*.zip')) + \
-                    glob(os.path.join('extension', '*.crx'))
+CUSTOM_EXTENSIONS = glob(os.path.join('extension', 'custom_extension', '*.zip')) + \
+                    glob(os.path.join('extension', 'custom_extension', '*.crx'))
 
 
 class ChromeProfile:
+
     VIEWPORTS = ['2560,1440', '1920,1080', '1440,900',
                  '1536,864', '1366,768', '1280,1024', '1024,768']
 
@@ -48,6 +49,27 @@ class ChromeProfile:
         if self.insecure:
             options.add_argument("--disable-web-security")
             options.add_argument("--allow-running-insecure-content")
+        # options.add_argument("--headless")
+        # options.add_argument("--log-level=3")
+        # options.add_experimental_option(
+        #     "excludeSwitches", ["enable-automation", "enable-logging"])
+        # options.add_experimental_option('useAutomationExtension', False)
+        # options.add_experimental_option('extensionLoadTimeout', 120000)
+        # options.add_argument(f'user-agent={agent}')
+        # options.add_argument('--mute-audio')
+        # options.add_argument('--no-sandbox')
+        # options.add_argument('--disable-dev-shm-usage')
+        # options.add_argument('--disable-features=UserAgentClientHint')
+        # options.add_argument('--disable-web-security')
+        # options.add_argument('--allow-insecure-localhost')
+        # options.add_argument('--allow-running-insecure-content')
+        # options.add_argument('--disable-blink-features=AutomationControlled')
+        # options.add_argument('--no-first-run --no-service-autorun --password-store=basic')
+
+        # webdriver.DesiredCapabilities.CHROME['loggingPrefs'] = {
+        #     'driver': 'OFF', 'server': 'OFF', 'browser': 'OFF'}
+        # capabilities = webdriver.DesiredCapabilities.CHROME
+        # capabilities['acceptSslCerts'] = True
         prefs = {
             "intl.accept_languages": 'en_US,en',
             "credentials_enable_service": False,
@@ -87,7 +109,6 @@ class ChromeProfile:
             username = self.driver.find_element(By.XPATH, username_xpath)
             if username:
                 pass
-                # print(username.text)
             else:
                 raise ValueError(f"Stuck at my account home page {self.email}")
         except TimeoutException:
@@ -102,7 +123,7 @@ class ChromeProfile:
         try:
             # First time login on device, type username
             type_text(driver=self.driver, text=self.email, xpath=username_xpath, loading=True,
-                      script=login_text_retrieve_script)
+                      script=login_text_retrieve_script, paste_text=100)
         except NoSuchElementException:
             # TODO: this site can't be reach
             raise
@@ -136,8 +157,6 @@ class ChromeProfile:
         password_xpath = '//*[@id="password"]/div[1]/div/div[1]/input'
         type_text(driver=self.driver, text=self.password, xpath=password_xpath, loading=True, refresh=True,
                   script=password_text_retrieve_script)
-        self.check_challenge()
-
         if 'challenge/pwd' in driver.current_url:
             # Something happens to the account
             get_error_div_script = "return document.querySelectorAll('form > span > " \
@@ -167,24 +186,35 @@ class ChromeProfile:
             backup_email_type_script = 'return document.querySelector("input[type=\'email\']");'
             type_text(driver=self.driver, text=self.backup_email, xpath=backup_xpath, loading=True,
                       script=backup_email_type_script)
+            # Check challenge after finish backup email
+            self.check_challenge()
         elif 'disabled/explanation' in driver.current_url:
             self.handle_false_email('Account disabled')
+        # elif 'speedbump/changepassword' in driver.current_url:
+        #     self.change_password()
         elif 'speedbump' in driver.current_url or \
                 'challenge/sk/presend' in driver.current_url or \
                 'challenge/dp' in driver.current_url:
-            # speedbump/changepassword -> require changing password ???
             # speedbump/idvreenable -> require phone verification ???
             # challenge/sk/presend -> require phone verification ???
             # challenge/dp -> select a number ???
             self.handle_false_email('Account required verification steps')
+
+    def change_password(self):
+        # TODO: handle change password here
+        pass
 
     def retrieve_driver(self):
         self.driver = self.create_driver()
         return self.driver
 
     def start(self):
+        self.adjust_viewport()
         self.check_login_status()
         sleep_for(Constant.SHORT_WAIT)
+
+    def adjust_viewport(self):
+        pass
 
     def create_proxy_folder(self):
         proxy_string = self.proxy
