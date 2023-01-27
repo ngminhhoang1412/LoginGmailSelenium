@@ -24,7 +24,8 @@ class ChromeProfile:
                  '1536,864', '1366,768', '1280,1024', '1024,768']
 
     def __init__(self, email, password, backup_email, auth_type=None, path=None,
-                 prox=None, prox_type=None, proxy_folder=None, is_disk_available=True, insecure=False):
+                 prox=None, prox_type=None, proxy_folder=None, is_disk_available=True, insecure=False,
+                 false_email_callback=None):
         self.email = email
         self.password = password
         self.backup_email = backup_email
@@ -36,6 +37,7 @@ class ChromeProfile:
         self.driver = None
         self.is_disk_available = is_disk_available
         self.insecure = insecure
+        self.false_email_callback = false_email_callback
 
     def create_driver(self):
         options = uc2.ChromeOptions()
@@ -276,9 +278,9 @@ class ChromeProfile:
         with open(os.path.join(self.proxy_folder, "background.js"), 'w') as fh:
             fh.write(background_js)
 
-    def handle_false_email(self, text, callback=None):
+    def handle_false_email(self, text):
         # Raise error, noted the email and exit the flow
-        if callback is not None:
-            callback()
+        if self.false_email_callback is not None:
+            self.false_email_callback(self.email, self.password, self.backup_email)
         log_false_email(f"{text}: <{self.email}:{self.password}:{self.backup_email}>")
         raise ValueError(f"{text} ({self.email})")
