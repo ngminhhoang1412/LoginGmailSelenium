@@ -102,11 +102,11 @@ class ChromeProfile:
         try:
             # First time login on device, type username
             type_text(driver=self.driver, text=self.email, xpath=username_xpath, loading=True,
-                      script=login_text_retrieve_script)
+                      script=login_text_retrieve_script, paste_text=100)
         except NoSuchElementException:
             # TODO: this site can't be reach
             raise
-        except Exception:
+        except (Exception, ValueError):
             # Profile already has at least 1 username, choose profile with correct email
             if "signinchooser" in driver.current_url:
                 desired_profile = driver.find_elements_by_xpath(f"//*[contains(text(), '{self.email}')]")
