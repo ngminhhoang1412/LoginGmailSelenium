@@ -59,7 +59,7 @@ example.py
 LICENSE
 setup.py
 ```
-3. Create (if not have) and check for version on setup.py
+3. Create (if not have) and update version number on setup.py
 
 4. Generate distribution archive files
 
