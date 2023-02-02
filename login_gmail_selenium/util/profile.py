@@ -10,10 +10,14 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from login_gmail_selenium.common.log import log_false_email
 
-WEBRTC = os.path.join('extension', 'webrtc_control.zip')
-ACTIVE = os.path.join('extension', 'always_active.zip')
-FINGERPRINT = os.path.join('extension', 'fingerprint_defender.zip')
-TIMEZONE = os.path.join('extension', 'spoof_timezone.zip')
+current_path = os.path.dirname(os.path.abspath(__file__))
+root_path = os.path.dirname(current_path)
+extension_path = os.path.join(root_path, 'extension')
+
+WEBRTC = os.path.join(extension_path, 'webrtc_control.zip')
+ACTIVE = os.path.join(extension_path, 'always_active.zip')
+FINGERPRINT = os.path.join(extension_path, 'fingerprint_defender.zip')
+TIMEZONE = os.path.join(extension_path, 'spoof_timezone.zip')
 CUSTOM_EXTENSIONS = glob(os.path.join('extension', 'custom_extension', '*.zip')) + \
                     glob(os.path.join('extension', 'custom_extension', '*.crx'))
 
@@ -161,12 +165,11 @@ class ChromeProfile:
                   script=password_text_retrieve_script)
         if 'challenge/pwd' in driver.current_url:
             # Something happens to the account
-            get_error_div_script = "return document.querySelectorAll('form > span > " \
-                                   "div > div[aria-live]')[0].childNodes;"
+            get_error_div_script = "return document.querySelectorAll('svg[class=\"stUf5b LxE1Id\"]')[0].childNodes;"
             error_div = driver.execute_script(get_error_div_script)
             if error_div:
-                get_error_msg_script = "return document.querySelectorAll('form > span > div > div[aria-live]')[0]." \
-                                       "childNodes[1].firstChild.textContent;"
+                get_error_msg_script = "return document.querySelectorAll(\"div[jsname='B34EJ']\")[0]" \
+                                       ".childNodes[0].textContent;"
                 error_msg = driver.execute_script(get_error_msg_script)
                 self.handle_false_email(f"Google error: {error_msg}")
             # Selenium failed to type password
