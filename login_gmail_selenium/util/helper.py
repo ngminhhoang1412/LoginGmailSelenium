@@ -45,6 +45,7 @@ def type_text(driver, text, xpath, custom_enter=None, paste_text=Constant.PASTE_
                 sleep_for(Constant.SHORT_WAIT)
                 input_keyword.clear()
                 input_keyword.send_keys(text)
+
             execute_with_retry(driver, retry_with_script)
         else:
             # TODO: need handling, still meet this case often
@@ -63,6 +64,7 @@ def ensure_click(driver, xpath, retry=Constant.RETRY, refresh=False, script=None
 
         def click_search():
             driver.find_element(By.XPATH, xpath).click()
+
         execute_with_retry(driver, click_search, retry=retry, refresh=refresh)
 
     except NoSuchElementException:
@@ -116,6 +118,7 @@ def ensure_find_element(driver, xpath):
 
     return execute_with_retry(driver, get_element, with_result=True)
 
+
 def get_version(path='C:\Program Files\Google\Chrome\Application'):
     """
 
@@ -123,12 +126,11 @@ def get_version(path='C:\Program Files\Google\Chrome\Application'):
        path: link to Chrome Application
     """
     try:
-        subfolders = [f.name for f in os.scandir(path) if f.is_dir()]
-        for folder in subfolders:
+        sub_folders = [f.name for f in os.scandir(path) if f.is_dir()]
+        for folder in sub_folders:
             version = folder.split('.')[0]
             if version.isnumeric():
                 bit = 1
                 return version
-    except:
+    except (Exception, ValueError):
         return 0
-

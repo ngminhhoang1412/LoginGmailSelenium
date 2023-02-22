@@ -5,7 +5,9 @@ This is a small package to log in to Google account with Selenium. After signin,
 Chrome profile of that user will be create and stored. With Chrome profile you can do so many automatic things
 with it.
 
-Always active extension is installed by default.
+Always active extension is installed by default. 
+To store the profile with minimum size on disk, WorkerService cache, OptimizationGuide and cache is cleared when quitting driver.
+
 >This has been developed for testing purposes only.
 > Any action you take using this script is strictly at your own risk. 
 > I will not be liable for any losses or damages you face using this script.
@@ -28,6 +30,7 @@ driver = profile.retrieve_driver()
 profile.start()
 # Do whatever with driver afterward
 driver.get('https://www.google.com/')
+driver.quit()
 ...
 ```
 1. Add folder extension/ if you want custom extensions for Chrome (.crx or .zip)

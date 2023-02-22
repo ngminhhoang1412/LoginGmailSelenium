@@ -1,7 +1,9 @@
 import undetected_chromedriver as uc2
 import os
 import login_gmail_selenium.common.constant as Constant
-from login_gmail_selenium.util.helper import type_text, sleep_for, ensure_click, get_version
+from login_gmail_selenium.util.driver import Driver
+from login_gmail_selenium.util.helper import type_text, sleep_for, ensure_click, \
+    get_version
 from glob import glob
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
@@ -42,6 +44,7 @@ class ChromeProfile:
         self.is_disk_available = is_disk_available
         self.insecure = insecure
         self.false_email_callback = false_email_callback
+        self.cache_folders = []
 
     def create_driver(self):
         options = uc2.ChromeOptions()
@@ -51,6 +54,10 @@ class ChromeProfile:
             # or the Chrome profile already exist then use it
             options.add_argument(f"--user-data-dir={path}")
             options.add_argument(f"--profile-directory={self.email}")
+            profile_path = os.path.join(Constant.PROFILE_FOLDER, self.email, self.email)
+            self.cache_folders.append(os.path.join(profile_path, 'optimization_guide_prediction_model_downloads'))
+            self.cache_folders.append(os.path.join(profile_path, 'Cache'))
+            self.cache_folders.append(os.path.join(profile_path, 'Service Worker', 'CacheStorage'))
         options.add_argument("--start-maximized")
         if self.insecure:
             options.add_argument("--disable-web-security")
@@ -104,7 +111,7 @@ class ChromeProfile:
         else:
             options.add_argument('--no-proxy-server')
         service = Service(executable_path=Constant.PATCHED_DRIVER)
-        return uc2.Chrome(service=service, options=options, version_main=get_version())
+        return Driver(service=service, options=options, version_main=get_version(), quit_callback=self.clear_cache)
 
     def check_login_status(self):
         self.driver.get("https://accounts.google.com/")
@@ -217,6 +224,7 @@ class ChromeProfile:
         self.adjust_viewport()
         self.check_login_status()
         sleep_for(Constant.SHORT_WAIT)
+        self.driver.execute_cdp_cmd(cmd='Network.clearBrowserCache', cmd_args={})
 
     def adjust_viewport(self):
         pass
@@ -287,3 +295,7 @@ class ChromeProfile:
             self.false_email_callback(self.email, self.password, self.backup_email, text)
         log_false_email(f"{text}: <{self.email}:{self.password}:{self.backup_email}>")
         raise ValueError(f"{text} ({self.email})")
+
+    def clear_cache(self):
+        for i in self.cache_folders:
+            os.system('rmdir /S /Q "{}"'.format(i))
