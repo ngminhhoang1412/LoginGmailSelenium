@@ -83,6 +83,10 @@ class ChromeProfile:
         #     'driver': 'OFF', 'server': 'OFF', 'browser': 'OFF'}
         # capabilities = webdriver.DesiredCapabilities.CHROME
         # capabilities['acceptSslCerts'] = True
+
+        # For cache
+        # --disable-features=OptimizationGuideModelDownloading,OptimizationHintsFetching,OptimizationTargetPrediction,OptimizationHints
+        # https://bugs.chromium.org/p/chromium/issues/detail?id=1311753
         prefs = {
             "intl.accept_languages": 'en_US,en',
             "credentials_enable_service": False,
