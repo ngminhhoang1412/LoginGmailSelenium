@@ -225,7 +225,7 @@ class ChromeProfile:
         type_text(driver=self.driver, text=new_pass, xpath=confirm_pass_path)
         self.change_email_password(new_password=new_pass)
         if self.change_password_callback is not None:
-            self.change_password_callback(self.email, self.password, self.backup_email, new_pass)
+            self.change_password_callback(self.email, new_pass)
 
     def retrieve_driver(self):
         self.driver = self.create_driver()
