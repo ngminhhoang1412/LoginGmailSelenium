@@ -9,7 +9,8 @@ from time import sleep
 from random import randint, uniform
 import selenium.webdriver.support.expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-
+import secrets
+import string
 
 def sleep_for(period):
     sleep(randint(period[0], period[1]))
@@ -116,6 +117,7 @@ def ensure_find_element(driver, xpath):
 
     return execute_with_retry(driver, get_element, with_result=True)
 
+
 def get_version(path='C:\Program Files\Google\Chrome\Application'):
     """
 
@@ -132,3 +134,13 @@ def get_version(path='C:\Program Files\Google\Chrome\Application'):
     except:
         return 0
 
+
+def create_random_password():
+    letters = string.ascii_letters
+    digits = string.digits
+    alphabet = letters + digits
+    pwd_length = Constant.PASSWORD_LENGTH
+    pwd = ''
+    for i in range(pwd_length):
+        pwd += ''.join(secrets.choice(alphabet))
+    return pwd

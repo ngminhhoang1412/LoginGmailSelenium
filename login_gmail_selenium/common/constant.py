@@ -16,6 +16,8 @@ VERY_SHORT_WAIT = [0, 1]
 LONG_WAIT = [20, 40]
 WIDE_WAIT = [1, 10]
 PASTE_PERCENTAGE = 50
+CHANGED_PASSWORD_SEPARATOR = '::::'
+PASSWORD_LENGTH = 25
 
 
 def resource_path(relative_path):
@@ -38,4 +40,3 @@ PATCHED_DRIVER = os.path.join(TEMP_FOLDER, 'chromedriver.exe')
 CHANGED_EMAILS_FILE = os.path.join(TEMP_FOLDER, 'changed_emails.log')
 FALSE_EMAIL_FILE = os.path.join(TEMP_FOLDER, 'false_email.log')
 PROXY_FOLDER = os.path.join(TEMP_FOLDER, 'proxy')
-gmail_file_name = None
