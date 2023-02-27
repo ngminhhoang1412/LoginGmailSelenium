@@ -35,5 +35,7 @@ os.makedirs(TEMP_FOLDER, exist_ok=True)
 LOG_FILE = os.path.join(TEMP_FOLDER, 'output.log')
 PROFILE_FOLDER = os.path.join(TEMP_FOLDER, 'profiles')
 PATCHED_DRIVER = os.path.join(TEMP_FOLDER, 'chromedriver.exe')
+CHANGED_EMAILS_FILE = os.path.join(TEMP_FOLDER, 'changed_emails.log')
 FALSE_EMAIL_FILE = os.path.join(TEMP_FOLDER, 'false_email.log')
 PROXY_FOLDER = os.path.join(TEMP_FOLDER, 'proxy')
+gmail_file_name = None

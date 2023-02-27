@@ -1,3 +1,5 @@
+import string
+import login_gmail_selenium.common.log
 import undetected_chromedriver as uc2
 import os
 import login_gmail_selenium.common.constant as Constant
@@ -9,6 +11,7 @@ import selenium.webdriver.support.expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from login_gmail_selenium.common.log import log_false_email
+import random
 
 current_path = os.path.dirname(os.path.abspath(__file__))
 root_path = os.path.dirname(current_path)
@@ -195,8 +198,8 @@ class ChromeProfile:
             self.check_challenge()
         elif 'disabled/explanation' in driver.current_url:
             self.handle_false_email('Account disabled')
-        # elif 'speedbump/changepassword' in driver.current_url:
-        #     self.change_password()
+        elif 'speedbump/changepassword' in driver.current_url:
+            self.change_password()
         elif 'speedbump' in driver.current_url or \
                 'challenge/sk/presend' in driver.current_url or \
                 'challenge/dp' in driver.current_url:
@@ -205,9 +208,15 @@ class ChromeProfile:
             # challenge/dp -> select a number ???
             self.handle_false_email('Account required verification steps')
 
-    def change_password(self):
-        # TODO: handle change password here
-        pass
+    def change_password(self, change_password_callback=None):
+        new_pass = random.choices(string.ascii_lowercase, k=9)
+        path_pass = '//*[@id="passwd"]/div[1]/div/div[1]/input'
+        type_text(driver=self.driver, text=new_pass, xpath=path_pass)
+        path_cfpass = '//*[@id="confirm-passwd"]/div[1]/div/div[1]/input'
+        type_text(driver=self.driver, text=new_pass, xpath=path_cfpass)
+        self.change_email_password(new_password=new_pass)
+        if change_password_callback is not None:
+            change_password_callback()
 
     def retrieve_driver(self):
         self.driver = self.create_driver()
@@ -287,3 +296,10 @@ class ChromeProfile:
             self.false_email_callback(self.email, self.password, self.backup_email, text)
         log_false_email(f"{text}: <{self.email}:{self.password}:{self.backup_email}>")
         raise ValueError(f"{text} ({self.email})")
+
+    def change_email_password(self, new_password):
+        new_pass = login_gmail_selenium.common.log.convert(new_password)
+        with open(Constant.CHANGED_EMAILS_FILE, 'a') as f:
+            f.write("\n" + f"<{self.email}:{self.password}:{self.backup_email}>" + "->" +
+                            f"<{self.email}:{new_pass}:{self.backup_email}>")
+

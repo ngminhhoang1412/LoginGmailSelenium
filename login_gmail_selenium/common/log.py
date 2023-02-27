@@ -16,3 +16,8 @@ def print_unrecognized_encoding(*objects, sep=' ', end='\n', file=sys.stdout):
     else:
         f: () = lambda obj: str(obj).encode(enc, errors='replace').decode(enc)
         print(*map(f, objects), sep=sep, end=end, file=file)
+
+
+def convert(s):
+    str1 = ""
+    return str1.join(s)
