@@ -223,6 +223,8 @@ class ChromeProfile:
             # challenge/sk/presend -> require phone verification ???
             # challenge/dp -> select a number ???
             self.handle_false_email('Account required verification steps')
+        else:
+            self.handle_false_email('Other error')
 
     def change_password(self):
         new_pass = helper.create_random_password()
