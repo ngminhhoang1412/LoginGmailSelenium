@@ -11,6 +11,7 @@ import selenium.webdriver.support.expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from login_gmail_selenium.common.log import log_false_email
+from login_gmail_selenium.util import helper
 
 current_path = os.path.dirname(os.path.abspath(__file__))
 root_path = os.path.dirname(current_path)
@@ -29,9 +30,19 @@ class ChromeProfile:
     VIEWPORTS = ['2560,1440', '1920,1080', '1440,900',
                  '1536,864', '1366,768', '1280,1024', '1024,768']
 
-    def __init__(self, email, password, backup_email, auth_type=None, path=None,
-                 prox=None, prox_type=None, proxy_folder=None, is_disk_available=True, insecure=False,
-                 false_email_callback=None):
+    def __init__(self,
+                 email,
+                 password,
+                 backup_email,
+                 auth_type=None,
+                 path=None,
+                 prox=None,
+                 prox_type=None,
+                 proxy_folder=None,
+                 is_disk_available=True,
+                 insecure=False,
+                 false_email_callback=None,
+                 change_password_callback=None):
         self.email = email
         self.password = password
         self.backup_email = backup_email
@@ -45,6 +56,7 @@ class ChromeProfile:
         self.insecure = insecure
         self.false_email_callback = false_email_callback
         self.cache_folders = []
+        self.change_password_callback = change_password_callback
 
     def create_driver(self):
         options = uc2.ChromeOptions()
@@ -206,8 +218,8 @@ class ChromeProfile:
             self.check_challenge()
         elif 'disabled/explanation' in driver.current_url:
             self.handle_false_email('Account disabled')
-        # elif 'speedbump/changepassword' in driver.current_url:
-        #     self.change_password()
+        elif 'speedbump/changepassword' in driver.current_url:
+            self.change_password()
         elif 'speedbump' in driver.current_url or \
                 'challenge/sk/presend' in driver.current_url or \
                 'challenge/dp' in driver.current_url:
@@ -217,8 +229,14 @@ class ChromeProfile:
             self.handle_false_email('Account required verification steps')
 
     def change_password(self):
-        # TODO: handle change password here
-        pass
+        new_pass = helper.create_random_password()
+        password_path = '//*[@id="passwd"]/div[1]/div/div[1]/input'
+        type_text(driver=self.driver, text=new_pass, xpath=password_path)
+        confirm_pass_path = '//*[@id="confirm-passwd"]/div[1]/div/div[1]/input'
+        type_text(driver=self.driver, text=new_pass, xpath=confirm_pass_path)
+        self.change_email_password(new_password=new_pass)
+        if self.change_password_callback is not None:
+            self.change_password_callback(self.email, new_pass)
 
     def retrieve_driver(self):
         self.driver = self.create_driver()
@@ -303,3 +321,10 @@ class ChromeProfile:
     def clear_cache(self):
         for i in self.cache_folders:
             os.system('rmdir /S /Q "{}"'.format(i))
+
+    def change_email_password(self, new_password):
+        with open(Constant.CHANGED_EMAILS_FILE, 'a') as f:
+            f.write("\n" + f"<{self.email}:{self.password}:{self.backup_email}>"
+                           f"{Constant.CHANGED_PASSWORD_SEPARATOR}"
+                           f"<{self.email}:{new_password}:{self.backup_email}>")
+
