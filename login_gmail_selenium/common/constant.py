@@ -18,6 +18,8 @@ WIDE_WAIT = [1, 10]
 PASTE_PERCENTAGE = 50
 CHANGED_PASSWORD_SEPARATOR = '::::'
 PASSWORD_LENGTH = 25
+ACCOUNT_DISABLED = 'Account disabled'
+ACCOUNT_VERIFICATION = 'Account required verification steps'
 
 
 def resource_path(relative_path):
