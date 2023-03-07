@@ -67,7 +67,7 @@ class ChromeProfile:
             options.add_argument(f"--user-data-dir={path}")
             options.add_argument(f"--profile-directory={self.email}")
             profile_path_parent = os.path.join(Constant.PROFILE_FOLDER, self.email)
-            profile_path = os.path.join(Constant.PROFILE_FOLDER, self.email, self.email)
+            profile_path = os.path.join(profile_path_parent, self.email)
             self.cache_folders.append(os.path.join(profile_path, 'optimization_guide_prediction_model_downloads'))
             self.cache_folders.append(os.path.join(profile_path, 'Cache'))
             self.cache_folders.append(os.path.join(profile_path, 'Service Worker', 'CacheStorage'))
