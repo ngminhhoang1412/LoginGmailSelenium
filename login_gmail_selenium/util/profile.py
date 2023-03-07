@@ -217,7 +217,7 @@ class ChromeProfile:
             # Check challenge after finish backup email
             self.check_challenge()
         elif 'disabled/explanation' in driver.current_url:
-            self.handle_false_email(Constant.ACCOUNT_DISABLED)
+            self.handle_false_email(Constant.ACCOUNT_DISABLED_MESSAGE)
         elif 'speedbump/changepassword' in driver.current_url:
             self.change_password()
         elif 'speedbump' in driver.current_url or \
@@ -226,7 +226,7 @@ class ChromeProfile:
             # speedbump/idvreenable -> require phone verification ???
             # challenge/sk/presend -> require phone verification ???
             # challenge/dp -> select a number ???
-            self.handle_false_email(Constant.ACCOUNT_VERIFICATION)
+            self.handle_false_email(Constant.ACCOUNT_VERIFICATION_MESSAGE)
 
     def change_password(self):
         new_pass = helper.create_random_password()
