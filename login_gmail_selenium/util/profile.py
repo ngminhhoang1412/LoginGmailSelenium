@@ -24,6 +24,8 @@ TIMEZONE = os.path.join(extension_path, 'spoof_timezone.zip')
 CUSTOM_EXTENSIONS = glob(os.path.join('extension', 'custom_extension', '*.zip')) + \
                     glob(os.path.join('extension', 'custom_extension', '*.crx'))
 
+NO_PROXY_POSTFIX = '_no_proxy'
+
 
 class ChromeProfile:
 
@@ -65,21 +67,24 @@ class ChromeProfile:
             # If disk space is still available then create a new Chrome profile
             # or the Chrome profile already exist then use it
             options.add_argument(f"--user-data-dir={path}")
-            options.add_argument(f"--profile-directory={self.email}")
-            profile_path_parent = os.path.join(Constant.PROFILE_FOLDER, self.email)
-            profile_path = os.path.join(profile_path_parent, self.email)
+            if self.auth_type is not None:
+                folder_name = self.email
+            else:
+                folder_name = f"{self.email}{NO_PROXY_POSTFIX}"
+            options.add_argument(f"--profile-directory={folder_name}")
+            profile_path = os.path.join(path, folder_name)
             self.cache_folders.append(os.path.join(profile_path, 'optimization_guide_prediction_model_downloads'))
             self.cache_folders.append(os.path.join(profile_path, 'Cache'))
             self.cache_folders.append(os.path.join(profile_path, 'Service Worker', 'CacheStorage'))
-            self.cache_folders.append(os.path.join(profile_path_parent, 'SwReporter'))
-            self.cache_folders.append(os.path.join(profile_path_parent, 'pnacl'))
-            self.cache_folders.append(os.path.join(profile_path_parent, 'OnDeviceHeadSuggestModel'))
-            self.cache_folders.append(os.path.join(profile_path_parent, 'MediaFoundationWidevineCdm'))
-            self.cache_folders.append(os.path.join(profile_path_parent, 'GrShaderCache'))
-            self.cache_folders.append(os.path.join(profile_path_parent, 'ClientSidePhishing'))
-            self.cache_folders.append(os.path.join(profile_path_parent, 'hyphen-data'))
-            self.cache_folders.append(os.path.join(profile_path_parent, 'ZxcvbnData'))
-            self.cache_folders.append(os.path.join(profile_path_parent, 'Safe Browsing'))
+            self.cache_folders.append(os.path.join(path, 'SwReporter'))
+            self.cache_folders.append(os.path.join(path, 'pnacl'))
+            self.cache_folders.append(os.path.join(path, 'OnDeviceHeadSuggestModel'))
+            self.cache_folders.append(os.path.join(path, 'MediaFoundationWidevineCdm'))
+            self.cache_folders.append(os.path.join(path, 'GrShaderCache'))
+            self.cache_folders.append(os.path.join(path, 'ClientSidePhishing'))
+            self.cache_folders.append(os.path.join(path, 'hyphen-data'))
+            self.cache_folders.append(os.path.join(path, 'ZxcvbnData'))
+            self.cache_folders.append(os.path.join(path, 'Safe Browsing'))
         options.add_argument("--start-maximized")
         if self.insecure:
             options.add_argument("--disable-web-security")

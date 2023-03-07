@@ -4,15 +4,29 @@ import time
 import os
 
 if __name__ == '__main__':
-    # profile = ChromeProfile('glanmum12@gmail.com', 'q2R1EcNi4', 'grahamma057449@hotmail.com')
-    proxy_folder = os.path.join(LGS_common.constant.PROXY_FOLDER, f'proxy_auth')
-    profile = LGS_util.profile.ChromeProfile('gmail', 'password',
-                                             'backup',
-                                             'private', None, 'username:pass@ip:port', 'http',
-                                             proxy_folder)
+    option = 2
+    if option == 1:
+        # No proxy
+        profile = LGS_util.profile.ChromeProfile('gmail',
+                                                 'password',
+                                                 'backup')
+    elif option == 2:
+        # For private proxy
+        proxy_folder = os.path.join(LGS_common.constant.PROXY_FOLDER, f'proxy_auth')
+        profile = LGS_util.profile.ChromeProfile('gmail',
+                                                 'password',
+                                                 'backup',
+                                                 'private',
+                                                 None,
+                                                 'username:pass@ip:port',
+                                                 'http',
+                                                 proxy_folder)
+    else:
+        # For public proxy
+        profile = None
+
     driver = profile.retrieve_driver()
     profile.start()
     driver.get('https://www.google.com/')
-    # profile.clear_cache()
-    time.sleep(10)
+    time.sleep(100)
     driver.quit()
