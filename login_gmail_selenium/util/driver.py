@@ -7,7 +7,13 @@ class Driver(uc2.Chrome):
         self.quit_callback = quit_callback
 
     def quit(self):
-        self.execute_cdp_cmd(cmd='Network.clearBrowserCache', cmd_args={})
+        try:
+            self.execute_cdp_cmd(cmd='Network.clearBrowserCache', cmd_args={})
+        except (Exception, ValueError):
+            pass
         self.close()
         super().quit()
-        self.quit_callback()
+        try:
+            self.quit_callback()
+        except (Exception, ValueError):
+            pass
