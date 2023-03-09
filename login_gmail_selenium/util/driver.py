@@ -8,10 +8,10 @@ class Driver(uc2.Chrome):
 
     def quit(self):
         try:
-            self.execute_cdp_cmd(cmd='Network.clearBrowserCache', cmd_args={})
+            super().execute_cdp_cmd(cmd='Network.clearBrowserCache', cmd_args={})
         except (Exception, ValueError):
             pass
-        self.close()
+        super().close()
         super().quit()
         try:
             self.quit_callback()

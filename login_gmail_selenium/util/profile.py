@@ -2,17 +2,17 @@ import undetected_chromedriver as uc2
 import os
 import shutil
 import login_gmail_selenium.common.constant as Constant
+import selenium.webdriver.support.expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from login_gmail_selenium.common.log import log_false_email
+from login_gmail_selenium.util import helper
 from login_gmail_selenium.util.driver import Driver
 from login_gmail_selenium.util.helper import type_text, sleep_for, ensure_click, \
     get_version
 from glob import glob
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
-import selenium.webdriver.support.expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.common.exceptions import TimeoutException, NoSuchElementException
-from login_gmail_selenium.common.log import log_false_email
-from login_gmail_selenium.util import helper
 
 current_path = os.path.dirname(os.path.abspath(__file__))
 root_path = os.path.dirname(current_path)
@@ -22,6 +22,7 @@ WEBRTC = os.path.join(extension_path, 'webrtc_control.zip')
 ACTIVE = os.path.join(extension_path, 'always_active.zip')
 FINGERPRINT = os.path.join(extension_path, 'fingerprint_defender.zip')
 TIMEZONE = os.path.join(extension_path, 'spoof_timezone.zip')
+VEEPN = os.path.join(extension_path, 'veepn.zip')
 CUSTOM_EXTENSIONS = glob(os.path.join('extension', 'custom_extension', '*.zip')) + \
                     glob(os.path.join('extension', 'custom_extension', '*.crx'))
 
@@ -90,29 +91,29 @@ class ChromeProfile:
         if self.insecure:
             options.add_argument("--disable-web-security")
             options.add_argument("--allow-running-insecure-content")
+        # header = Headers(
+        #     browser='chrome'
+        # ).generate()
+        # agent = f"user-agent={header['User-Agent']}"
         # options.add_argument("--headless")
         # options.add_argument("--log-level=3")
         # options.add_experimental_option(
         #     "excludeSwitches", ["enable-automation", "enable-logging"])
         # options.add_experimental_option('useAutomationExtension', False)
         # options.add_experimental_option('extensionLoadTimeout', 120000)
-        # options.add_argument(f'user-agent={agent}')
+        # options.add_argument(agent)
         # options.add_argument('--mute-audio')
         # options.add_argument('--no-sandbox')
         # options.add_argument('--disable-dev-shm-usage')
         # options.add_argument('--disable-features=UserAgentClientHint')
         # options.add_argument('--disable-web-security')
         # options.add_argument('--allow-insecure-localhost')
-        # options.add_argument('--allow-running-insecure-content')
         # options.add_argument('--disable-blink-features=AutomationControlled')
         # options.add_argument('--no-first-run --no-service-autorun --password-store=basic')
-
         # webdriver.DesiredCapabilities.CHROME['loggingPrefs'] = {
         #     'driver': 'OFF', 'server': 'OFF', 'browser': 'OFF'}
-        # capabilities = webdriver.DesiredCapabilities.CHROME
-        # capabilities['acceptSslCerts'] = True
 
-        # For cache
+        # Note: For cache
         # --disable-features=OptimizationGuideModelDownloading,OptimizationHintsFetching,OptimizationTargetPrediction,OptimizationHints
         # https://bugs.chromium.org/p/chromium/issues/detail?id=1311753
         prefs = {
@@ -130,6 +131,7 @@ class ChromeProfile:
         options.add_extension(FINGERPRINT)
         options.add_extension(TIMEZONE)
         options.add_extension(ACTIVE)
+        options.add_extension(VEEPN)
         if CUSTOM_EXTENSIONS:
             for extension in CUSTOM_EXTENSIONS:
                 options.add_extension(extension)
@@ -343,4 +345,3 @@ class ChromeProfile:
             f.write("\n" + f"<{self.email}:{self.password}:{self.backup_email}>"
                            f"{Constant.CHANGED_PASSWORD_SEPARATOR}"
                            f"<{self.email}:{new_password}:{self.backup_email}>")
-
