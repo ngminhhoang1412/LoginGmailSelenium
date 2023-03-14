@@ -7,13 +7,15 @@ class Driver(uc2.Chrome):
         self.quit_callback = quit_callback
 
     def quit(self):
+        callback_executed = False
         try:
             super().execute_cdp_cmd(cmd='Network.clearBrowserCache', cmd_args={})
-        except (Exception, ValueError):
-            pass
-        super().close()
-        super().quit()
-        try:
+            super().close()
+            super().quit()
+            callback_executed = True
             self.quit_callback()
         except (Exception, ValueError):
-            pass
+            if callback_executed:
+                print('Error executing quit callback')
+            else:
+                print('Error quitting driver')

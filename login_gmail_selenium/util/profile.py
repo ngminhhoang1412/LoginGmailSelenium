@@ -10,7 +10,6 @@ from login_gmail_selenium.util import helper
 from login_gmail_selenium.util.driver import Driver
 from login_gmail_selenium.util.helper import type_text, sleep_for, ensure_click, \
     get_version
-from glob import glob
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 
@@ -23,8 +22,6 @@ ACTIVE = os.path.join(extension_path, 'always_active.zip')
 FINGERPRINT = os.path.join(extension_path, 'fingerprint_defender.zip')
 TIMEZONE = os.path.join(extension_path, 'spoof_timezone.zip')
 VEEPN = os.path.join(extension_path, 'veepn.zip')
-CUSTOM_EXTENSIONS = glob(os.path.join('extension', 'custom_extension', '*.zip')) + \
-                    glob(os.path.join('extension', 'custom_extension', '*.crx'))
 
 NO_PROXY_POSTFIX = '_no_proxy'
 
@@ -95,23 +92,14 @@ class ChromeProfile:
         #     browser='chrome'
         # ).generate()
         # agent = f"user-agent={header['User-Agent']}"
-        # options.add_argument("--headless")
-        # options.add_argument("--log-level=3")
-        # options.add_experimental_option(
-        #     "excludeSwitches", ["enable-automation", "enable-logging"])
-        # options.add_experimental_option('useAutomationExtension', False)
-        # options.add_experimental_option('extensionLoadTimeout', 120000)
         # options.add_argument(agent)
         # options.add_argument('--mute-audio')
         # options.add_argument('--no-sandbox')
         # options.add_argument('--disable-dev-shm-usage')
         # options.add_argument('--disable-features=UserAgentClientHint')
-        # options.add_argument('--disable-web-security')
         # options.add_argument('--allow-insecure-localhost')
         # options.add_argument('--disable-blink-features=AutomationControlled')
         # options.add_argument('--no-first-run --no-service-autorun --password-store=basic')
-        # webdriver.DesiredCapabilities.CHROME['loggingPrefs'] = {
-        #     'driver': 'OFF', 'server': 'OFF', 'browser': 'OFF'}
 
         # Note: For cache
         # --disable-features=OptimizationGuideModelDownloading,OptimizationHintsFetching,OptimizationTargetPrediction,OptimizationHints
@@ -132,9 +120,9 @@ class ChromeProfile:
         options.add_extension(TIMEZONE)
         options.add_extension(ACTIVE)
         options.add_extension(VEEPN)
-        if CUSTOM_EXTENSIONS:
-            for extension in CUSTOM_EXTENSIONS:
-                options.add_extension(extension)
+        # if CUSTOM_EXTENSIONS:
+        #     for extension in CUSTOM_EXTENSIONS:
+        #         options.add_extension(extension)
 
         # Either private proxy, public proxy or no proxy at all
         if self.auth_type == 'private':
@@ -238,6 +226,9 @@ class ChromeProfile:
             self.handle_false_email(Constant.ACCOUNT_DISABLED_MESSAGE)
         elif 'speedbump/changepassword' in driver.current_url:
             self.change_password()
+        # TODO: need handling for 2 more cases
+        # elif 'rejected'/'ootp' in driver.current_url:
+        #     pass
         elif 'speedbump' in driver.current_url or \
                 'challenge/sk/presend' in driver.current_url or \
                 'challenge/dp' in driver.current_url:

@@ -12,4 +12,5 @@ login_gmail_selenium/common/__pycache__/
 .*
 !/.gitignore
 login_gmail_selenium.egg-info/
+test/
 
