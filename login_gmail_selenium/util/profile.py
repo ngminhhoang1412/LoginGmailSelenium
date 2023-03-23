@@ -226,6 +226,8 @@ class ChromeProfile:
             self.handle_false_email(Constant.ACCOUNT_DISABLED_MESSAGE)
         elif 'speedbump/changepassword' in driver.current_url:
             self.change_password()
+            if 'disabled/explanation' in driver.current_url:
+                self.handle_false_email(Constant.ACCOUNT_DISABLED_MESSAGE)
         # TODO: need handling for 2 more cases
         # elif 'rejected'/'ootp' in driver.current_url:
         #     pass
