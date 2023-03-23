@@ -12,6 +12,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 import secrets
 import string
 
+
 def sleep_for(period):
     sleep(randint(period[0], period[1]))
 

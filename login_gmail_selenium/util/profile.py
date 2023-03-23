@@ -165,13 +165,13 @@ class ChromeProfile:
         except (Exception, ValueError):
             # Profile already has at least 1 username, choose profile with correct email
             if "signinchooser" in driver.current_url:
-                desired_profile = driver.find_elements_by_xpath(f"//*[contains(text(), '{self.email}')]")
+                desired_profile = driver.find_element(By.XPATH, f"//div[contains(text(), '{self.email}')]")
                 if desired_profile:
-                    desired_profile[0].click()
+                    desired_profile.click()
                 else:
                     new_profile_xpath = "//*[@id=\"view_container\"]/div/div/div[2]/div/div[1]/div/form/span/" \
                                         "section/div/div/div/div/ul/li[2]"
-                    driver.find_elements_by_xpath(new_profile_xpath)[0].click()
+                    ensure_click(driver, new_profile_xpath)
                     type_text(driver=self.driver, text=self.email, xpath=username_xpath, loading=True,
                               script=login_text_retrieve_script)
             # Account has been logged in from another device
