@@ -15,7 +15,8 @@ class Driver(uc2.Chrome):
             callback_executed = True
             self.quit_callback()
         except (Exception, ValueError):
-            if callback_executed:
-                print('Error executing quit callback')
-            else:
-                print('Error quitting driver')
+            pass
+            # if callback_executed:
+            #     print('Error executing quit callback')
+            # else:
+            #     print('Error quitting driver')
