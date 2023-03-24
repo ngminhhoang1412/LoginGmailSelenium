@@ -24,6 +24,12 @@ TIMEZONE = os.path.join(extension_path, 'spoof_timezone.zip')
 VEEPN = os.path.join(extension_path, 'veepn.zip')
 
 NO_PROXY_POSTFIX = '_no_proxy'
+PUBLIC_PROXY_POSTFIX = '_public_proxy'
+AUTH_TYPES = [
+    'private',
+    'public',
+    None
+]
 
 
 class ChromeProfile:
@@ -35,7 +41,7 @@ class ChromeProfile:
                  email,
                  password,
                  backup_email,
-                 auth_type=None,
+                 auth_type=AUTH_TYPES[2],
                  path=None,
                  prox=None,
                  prox_type=None,
@@ -66,8 +72,10 @@ class ChromeProfile:
             # If disk space is still available then create a new Chrome profile
             # or the Chrome profile already exist then use it
             options.add_argument(f"--user-data-dir={path}")
-            if self.auth_type is not None:
+            if self.auth_type is AUTH_TYPES[0]:
                 folder_name = self.email
+            elif self.auth_type is AUTH_TYPES[1]:
+                folder_name = f"{self.email}{PUBLIC_PROXY_POSTFIX}"
             else:
                 folder_name = f"{self.email}{NO_PROXY_POSTFIX}"
             options.add_argument(f"--profile-directory={folder_name}")
@@ -125,10 +133,10 @@ class ChromeProfile:
         #         options.add_extension(extension)
 
         # Either private proxy, public proxy or no proxy at all
-        if self.auth_type == 'private':
+        if self.auth_type == AUTH_TYPES[0]:
             self.create_proxy_folder()
             options.add_argument(f"--load-extension={self.proxy_folder}")
-        elif self.auth_type == 'public':
+        elif self.auth_type == AUTH_TYPES[1]:
             options.add_argument(f'--proxy-server={self.proxy_type}://{self.proxy}')
         else:
             options.add_argument('--no-proxy-server')
