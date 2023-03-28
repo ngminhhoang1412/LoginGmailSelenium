@@ -8,7 +8,7 @@ with open('requirements.txt', 'r', encoding='utf-16') as f:
 
 setuptools.setup(
     name="login_gmail_selenium",
-    version="1.1.4",
+    version="1.1.6",
     author="Minh Hoang",
     author_email="ngminhhoang1412@gmail.com",
     description="A python package for login google by selenium",
