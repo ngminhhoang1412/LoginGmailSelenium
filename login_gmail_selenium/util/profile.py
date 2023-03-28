@@ -45,7 +45,7 @@ class ChromeProfile:
         self.email = email
         self.password = password
         self.backup_email = backup_email
-        self.proxy_folder = Constant.PROXY_FOLDER
+        self.proxy_folder = os.path.join(Constant.PROXY_FOLDER, f'proxy_auth_{self.email}')
         self.auth_type = auth_type
         self.path = path
         self.proxy = prox or "empty"
