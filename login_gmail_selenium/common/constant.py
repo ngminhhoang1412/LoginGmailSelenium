@@ -34,7 +34,6 @@ def resource_path(relative_path):
 
 # NOTE: Configuration
 CWD = resource_path("")
-driver_dict = {}
 TEMP_FOLDER = resource_path("temp")
 os.makedirs(TEMP_FOLDER, exist_ok=True)
 LOG_FILE = os.path.join(TEMP_FOLDER, 'output.log')

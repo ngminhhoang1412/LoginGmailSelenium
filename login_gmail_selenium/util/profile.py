@@ -45,7 +45,7 @@ class ChromeProfile:
         self.email = email
         self.password = password
         self.backup_email = backup_email
-        self.proxy_folder = os.path.join(Constant.PROXY_FOLDER, f'proxy_auth_{self.email}')
+        self.proxy_folder = None
         self.auth_type = auth_type
         self.path = path
         self.proxy = prox or "empty"
@@ -260,6 +260,7 @@ class ChromeProfile:
         pass
 
     def create_proxy_folder(self):
+        self.proxy_folder = os.path.join(Constant.PROXY_FOLDER, f'proxy_auth_{self.email}')
         proxy_string = self.proxy
         proxy = proxy_string.replace('@', ':')
         proxy = proxy.split(':')
@@ -311,7 +312,6 @@ class ChromeProfile:
                     ['blocking']
         );
         """ % (proxy[2], proxy[-1], proxy[0], proxy[1])
-
         os.makedirs(self.proxy_folder, exist_ok=True)
         with open(os.path.join(self.proxy_folder, "manifest.json"), 'w') as fh:
             fh.write(manifest_json)
@@ -343,10 +343,8 @@ class ChromeProfile:
                 # TODO: check this
                 # if data_dir in temp_folders:
                 #     temp_folders.remove(data_dir)
-
-            proxy_folder = Constant.driver_dict.pop(self.driver, None)
-            if proxy_folder:
-                shutil.rmtree(proxy_folder, ignore_errors=True)
+            if self.proxy_folder:
+                shutil.rmtree(self.proxy_folder, ignore_errors=True)
             return 400
         except (Exception, ValueError):
             pass
