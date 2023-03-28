@@ -329,22 +329,14 @@ class ChromeProfile:
     def clear_cache(self):
         for i in self.cache_folders:
             shutil.rmtree(i)
+        try:
+            if self.proxy_folder:
+                shutil.rmtree(self.proxy_folder, ignore_errors=True)
+        except (Exception, ValueError):
+            pass
 
     def change_email_password(self, new_password):
         with open(Constant.CHANGED_EMAILS_FILE, 'a') as f:
             f.write("\n" + f"<{self.email}:{self.password}:{self.backup_email}>"
                            f"{Constant.CHANGED_PASSWORD_SEPARATOR}"
                            f"<{self.email}:{new_password}:{self.backup_email}>")
-
-    def quit_driver(self, data_dir=None):
-        try:
-            if self.driver:
-                self.driver.quit()
-                # TODO: check this
-                # if data_dir in temp_folders:
-                #     temp_folders.remove(data_dir)
-            if self.proxy_folder:
-                shutil.rmtree(self.proxy_folder, ignore_errors=True)
-            return 400
-        except (Exception, ValueError):
-            pass
