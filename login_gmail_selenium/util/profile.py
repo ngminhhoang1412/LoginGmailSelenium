@@ -45,21 +45,18 @@ class ChromeProfile:
                  path=None,
                  prox=None,
                  prox_type=None,
-                 proxy_folder=None,
-                 is_disk_available=True,
                  insecure=False,
                  false_email_callback=None,
                  change_password_callback=None):
         self.email = email
         self.password = password
         self.backup_email = backup_email
-        self.proxy_folder = proxy_folder
+        self.proxy_folder = None
         self.auth_type = auth_type
         self.path = path
         self.proxy = prox or "empty"
         self.proxy_type = prox_type
         self.driver = None
-        self.is_disk_available = is_disk_available
         self.insecure = insecure
         self.false_email_callback = false_email_callback
         self.cache_folders = []
@@ -68,7 +65,7 @@ class ChromeProfile:
     def create_driver(self):
         options = uc2.ChromeOptions()
         path = os.path.join(Constant.PROFILE_FOLDER, self.email)
-        if self.is_disk_available or os.path.isdir(path):
+        if Constant.DISK_SPACE or os.path.isdir(path):
             # If disk space is still available then create a new Chrome profile
             # or the Chrome profile already exist then use it
             options.add_argument(f"--user-data-dir={path}")
@@ -271,6 +268,7 @@ class ChromeProfile:
         pass
 
     def create_proxy_folder(self):
+        self.proxy_folder = os.path.join(Constant.PROXY_FOLDER, f'proxy_auth_{self.email}')
         proxy_string = self.proxy
         proxy = proxy_string.replace('@', ':')
         proxy = proxy.split(':')
@@ -322,7 +320,6 @@ class ChromeProfile:
                     ['blocking']
         );
         """ % (proxy[2], proxy[-1], proxy[0], proxy[1])
-
         os.makedirs(self.proxy_folder, exist_ok=True)
         with open(os.path.join(self.proxy_folder, "manifest.json"), 'w') as fh:
             fh.write(manifest_json)
@@ -340,6 +337,11 @@ class ChromeProfile:
     def clear_cache(self):
         for i in self.cache_folders:
             shutil.rmtree(i)
+        try:
+            if self.proxy_folder:
+                shutil.rmtree(self.proxy_folder, ignore_errors=True)
+        except (Exception, ValueError):
+            pass
 
     def change_email_password(self, new_password):
         with open(Constant.CHANGED_EMAILS_FILE, 'a') as f:
