@@ -39,21 +39,18 @@ class ChromeProfile:
                  path=None,
                  prox=None,
                  prox_type=None,
-                 proxy_folder=None,
-                 is_disk_available=True,
                  insecure=False,
                  false_email_callback=None,
                  change_password_callback=None):
         self.email = email
         self.password = password
         self.backup_email = backup_email
-        self.proxy_folder = proxy_folder
+        self.proxy_folder = Constant.PROXY_FOLDER
         self.auth_type = auth_type
         self.path = path
         self.proxy = prox or "empty"
         self.proxy_type = prox_type
         self.driver = None
-        self.is_disk_available = is_disk_available
         self.insecure = insecure
         self.false_email_callback = false_email_callback
         self.cache_folders = []
@@ -62,7 +59,7 @@ class ChromeProfile:
     def create_driver(self):
         options = uc2.ChromeOptions()
         path = os.path.join(Constant.PROFILE_FOLDER, self.email)
-        if self.is_disk_available or os.path.isdir(path):
+        if Constant.DISK_SPACE or os.path.isdir(path):
             # If disk space is still available then create a new Chrome profile
             # or the Chrome profile already exist then use it
             options.add_argument(f"--user-data-dir={path}")
@@ -338,3 +335,18 @@ class ChromeProfile:
             f.write("\n" + f"<{self.email}:{self.password}:{self.backup_email}>"
                            f"{Constant.CHANGED_PASSWORD_SEPARATOR}"
                            f"<{self.email}:{new_password}:{self.backup_email}>")
+
+    def quit_driver(self, data_dir=None):
+        try:
+            if self.driver:
+                self.driver.quit()
+                # TODO: check this
+                # if data_dir in temp_folders:
+                #     temp_folders.remove(data_dir)
+
+            proxy_folder = Constant.driver_dict.pop(self.driver, None)
+            if proxy_folder:
+                shutil.rmtree(proxy_folder, ignore_errors=True)
+            return 400
+        except (Exception, ValueError):
+            pass

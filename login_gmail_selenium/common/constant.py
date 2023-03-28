@@ -16,6 +16,7 @@ VERY_SHORT_WAIT = [0, 1]
 LONG_WAIT = [20, 40]
 WIDE_WAIT = [1, 10]
 PASTE_PERCENTAGE = 50
+DISK_SPACE = 80.0
 CHANGED_PASSWORD_SEPARATOR = '::::'
 PASSWORD_LENGTH = 25
 ACCOUNT_DISABLED_MESSAGE = 'Account disabled'
@@ -33,7 +34,7 @@ def resource_path(relative_path):
 
 # NOTE: Configuration
 CWD = resource_path("")
-
+driver_dict = {}
 TEMP_FOLDER = resource_path("temp")
 os.makedirs(TEMP_FOLDER, exist_ok=True)
 LOG_FILE = os.path.join(TEMP_FOLDER, 'output.log')
