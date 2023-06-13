@@ -120,12 +120,12 @@ class ChromeProfile:
             "profile.default_content_setting_values.geolocation": 1
         }
         options.add_experimental_option("prefs", prefs)
-        options.add_argument("--disable-notifications")
         options.add_extension(WEBRTC)
         options.add_extension(FINGERPRINT)
         options.add_extension(TIMEZONE)
         options.add_extension(ACTIVE)
         options.add_extension(VEEPN)
+        options.add_argument("--disable-notifications")
         # if CUSTOM_EXTENSIONS:
         #     for extension in CUSTOM_EXTENSIONS:
         #         options.add_extension(extension)
