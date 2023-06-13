@@ -120,6 +120,7 @@ class ChromeProfile:
             "profile.default_content_setting_values.geolocation": 1
         }
         options.add_experimental_option("prefs", prefs)
+        options.add_argument("--disable-notifications")
         options.add_extension(WEBRTC)
         options.add_extension(FINGERPRINT)
         options.add_extension(TIMEZONE)
