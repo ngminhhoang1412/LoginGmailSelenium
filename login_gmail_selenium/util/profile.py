@@ -234,6 +234,9 @@ class ChromeProfile:
             if 'disabled/explanation' in driver.current_url:
                 self.handle_false_email(Constant.ACCOUNT_DISABLED_MESSAGE)
         # TODO: need handling for 2 more cases
+        elif 'rejected' in driver.current_url:
+            self.handle_false_email(Constant.ACCOUNT_REJECTED_MESSAGE)
+        # TODO: need handling for cases 'ootp'
         # elif 'rejected'/'ootp' in driver.current_url:
         #     pass
         elif 'speedbump' in driver.current_url or \

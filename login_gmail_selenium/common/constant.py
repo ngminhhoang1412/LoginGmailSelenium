@@ -20,6 +20,7 @@ DISK_SPACE = 80.0
 CHANGED_PASSWORD_SEPARATOR = '::::'
 PASSWORD_LENGTH = 25
 ACCOUNT_DISABLED_MESSAGE = 'Account disabled'
+ACCOUNT_REJECTED_MESSAGE = 'Account rejected'
 ACCOUNT_VERIFICATION_MESSAGE = 'Account required verification steps'
 
 
