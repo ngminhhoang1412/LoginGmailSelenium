@@ -125,6 +125,7 @@ class ChromeProfile:
         options.add_extension(TIMEZONE)
         options.add_extension(ACTIVE)
         options.add_extension(VEEPN)
+        options.add_argument("--disable-notifications")
         # if CUSTOM_EXTENSIONS:
         #     for extension in CUSTOM_EXTENSIONS:
         #         options.add_extension(extension)
