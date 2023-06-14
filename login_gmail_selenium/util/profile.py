@@ -233,15 +233,19 @@ class ChromeProfile:
             self.change_password()
             if 'disabled/explanation' in driver.current_url:
                 self.handle_false_email(Constant.ACCOUNT_DISABLED_MESSAGE)
-        # TODO: need handling for 2 more cases
-        # elif 'rejected'/'ootp' in driver.current_url:
-        #     pass
+        elif 'recaptcha' in driver.current_url:
+            self.handle_false_email(Constant.ACCOUNT_REQUIRED_CAPTCHA)
+        elif 'rejected' in driver.current_url:
+            self.handle_false_email(Constant.ACCOUNT_REJECTED_MESSAGE)
         elif 'speedbump' in driver.current_url or \
                 'challenge/sk/presend' in driver.current_url or \
-                'challenge/dp' in driver.current_url:
-            # speedbump/idvreenable -> require phone verification ???
-            # challenge/sk/presend -> require phone verification ???
-            # challenge/dp -> select a number ???
+                'challenge/dp' in driver.current_url or \
+                'speedbump/idvreenable' in driver.current_url or \
+                'ootp' in driver.current_url:
+            # speedbump/idvreenable -> require phone verification
+            # challenge/sk/presend -> require phone verification
+            # challenge/dp -> select a number
+            # ootp -> required OTP
             self.handle_false_email(Constant.ACCOUNT_VERIFICATION_MESSAGE)
 
     def change_password(self):
