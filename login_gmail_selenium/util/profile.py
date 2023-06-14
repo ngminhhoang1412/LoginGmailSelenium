@@ -90,6 +90,8 @@ class ChromeProfile:
             self.cache_folders.append(os.path.join(path, 'ZxcvbnData'))
             self.cache_folders.append(os.path.join(path, 'Safe Browsing'))
         options.add_argument("--start-maximized")
+        options.add_argument("--disable-notifications")
+        
         if self.insecure:
             options.add_argument("--disable-web-security")
             options.add_argument("--allow-running-insecure-content")
@@ -125,7 +127,6 @@ class ChromeProfile:
         options.add_extension(TIMEZONE)
         options.add_extension(ACTIVE)
         options.add_extension(VEEPN)
-        options.add_argument("--disable-notifications")
         # if CUSTOM_EXTENSIONS:
         #     for extension in CUSTOM_EXTENSIONS:
         #         options.add_extension(extension)
