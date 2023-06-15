@@ -167,7 +167,6 @@ class ChromeProfile:
             type_text(driver=self.driver, text=self.email, xpath=username_xpath, loading=True,
                       script=login_text_retrieve_script, paste_text=100)
         except NoSuchElementException:
-            # TODO: this site can't be reach
             raise
         except (Exception, ValueError):
             # Profile already has at least 1 username, choose profile with correct email
