@@ -233,7 +233,7 @@ class ChromeProfile:
             if 'disabled/explanation' in driver.current_url:
                 self.handle_false_email(Constant.ACCOUNT_DISABLED_MESSAGE)
         elif 'challenge/recaptcha' in driver.current_url:
-            self.handle_false_email(Constant.ACCOUNT_REQUIRED_CAPTCHA)
+            self.handle_false_email(Constant.ACCOUNT_REQUIRED_CAPTCHA_MESSAGE)
         elif 'signin/rejected' in driver.current_url:
             self.handle_false_email(Constant.ACCOUNT_REJECTED_MESSAGE)
         elif 'speedbump' in driver.current_url or \
