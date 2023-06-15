@@ -21,8 +21,9 @@ CHANGED_PASSWORD_SEPARATOR = '::::'
 PASSWORD_LENGTH = 25
 ACCOUNT_DISABLED_MESSAGE = 'Account disabled'
 ACCOUNT_VERIFICATION_MESSAGE = 'Account required verification steps'
-ACCOUNT_REQUIRED_CAPTCHA = 'Account required captcha'
+ACCOUNT_REQUIRED_CAPTCHA_MESSAGE = 'Account required captcha'
 ACCOUNT_REJECTED_MESSAGE = 'Account rejected because of suspicious action'
+ACCOUNT_PASSWORD_CHANGED_MESSAGE = 'Password changed'
 
 
 def resource_path(relative_path):
