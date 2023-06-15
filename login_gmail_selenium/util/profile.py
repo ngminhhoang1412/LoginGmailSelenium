@@ -204,10 +204,7 @@ class ChromeProfile:
             get_error_div_script = "return document.querySelectorAll('svg[class=\"stUf5b LxE1Id\"]')[0].childNodes;"
             error_div = driver.execute_script(get_error_div_script)
             if error_div:
-                # get_error_msg_script = "return document.querySelectorAll(\"div[jsname='B34EJ']\")[0]" \
-                #                        ".childNodes[0].textContent;"
-                # error_msg = driver.execute_script(get_error_msg_script)
-                self.handle_false_email(Constant.ACCOUNT_PASSWORD_CHANGE_MESSAGE)
+                self.handle_false_email(Constant.ACCOUNT_PASSWORD_CHANGED_MESSAGE)
             # Selenium failed to type password
             raise ValueError("Selenium failed to type password")
         self.check_challenge()
