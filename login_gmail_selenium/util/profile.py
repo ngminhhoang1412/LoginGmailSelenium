@@ -90,6 +90,8 @@ class ChromeProfile:
             self.cache_folders.append(os.path.join(path, 'ZxcvbnData'))
             self.cache_folders.append(os.path.join(path, 'Safe Browsing'))
         options.add_argument("--start-maximized")
+        options.add_argument("--disable-notifications")
+
         if self.insecure:
             options.add_argument("--disable-web-security")
             options.add_argument("--allow-running-insecure-content")
@@ -233,17 +235,22 @@ class ChromeProfile:
             self.change_password()
             if 'disabled/explanation' in driver.current_url:
                 self.handle_false_email(Constant.ACCOUNT_DISABLED_MESSAGE)
-        elif 'rejected' in driver.current_url:
+        elif 'challenge/recaptcha' in driver.current_url:
+            self.handle_false_email(Constant.ACCOUNT_REQUIRED_CAPTCHA)
+        elif 'signin/rejected' in driver.current_url:
             self.handle_false_email(Constant.ACCOUNT_REJECTED_MESSAGE)
-        # TODO: need handling for cases 'ootp'
-        # elif 'rejected'/'ootp' in driver.current_url:
-        #     pass
         elif 'speedbump' in driver.current_url or \
                 'challenge/sk/presend' in driver.current_url or \
-                'challenge/dp' in driver.current_url:
-            # speedbump/idvreenable -> require phone verification ???
-            # challenge/sk/presend -> require phone verification ???
-            # challenge/dp -> select a number ???
+                'challenge/dp' in driver.current_url or \
+                'challenge/ootp' in driver.current_url or \
+                'challenge/ipp' in driver.current_url or \
+                'challenge/iap' in driver.current_url:
+            # speedbump/idvreenable -> require phone verification
+            # challenge/sk/presend -> require phone verification
+            # challenge/dp -> select a number
+            # ootp -> required OTP
+            # ipp -> required OTP
+            # iap -> require phone verification
             self.handle_false_email(Constant.ACCOUNT_VERIFICATION_MESSAGE)
 
     def change_password(self):
