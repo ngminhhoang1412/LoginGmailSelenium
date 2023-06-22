@@ -90,9 +90,13 @@ class ChromeProfile:
             self.cache_folders.append(os.path.join(path, 'ZxcvbnData'))
             self.cache_folders.append(os.path.join(path, 'Safe Browsing'))
         options.add_argument("--start-maximized")
+        options.add_argument("--disable-notifications")
+        options.add_argument("--disable-popup-blocking")
+
         if self.insecure:
             options.add_argument("--disable-web-security")
             options.add_argument("--allow-running-insecure-content")
+            
         # header = Headers(
         #     browser='chrome'
         # ).generate()
@@ -125,8 +129,6 @@ class ChromeProfile:
         options.add_extension(TIMEZONE)
         options.add_extension(ACTIVE)
         options.add_extension(VEEPN)
-        options.add_argument("--disable-notifications")
-        options.add_argument("--disable-popup-blocking")
         # if CUSTOM_EXTENSIONS:
         #     for extension in CUSTOM_EXTENSIONS:
         #         options.add_extension(extension)
@@ -167,7 +169,6 @@ class ChromeProfile:
             type_text(driver=self.driver, text=self.email, xpath=username_xpath, loading=True,
                       script=login_text_retrieve_script, paste_text=100)
         except NoSuchElementException:
-            # TODO: this site can't be reach
             raise
         except (Exception, ValueError):
             # Profile already has at least 1 username, choose profile with correct email
@@ -204,10 +205,7 @@ class ChromeProfile:
             get_error_div_script = "return document.querySelectorAll('svg[class=\"stUf5b LxE1Id\"]')[0].childNodes;"
             error_div = driver.execute_script(get_error_div_script)
             if error_div:
-                get_error_msg_script = "return document.querySelectorAll(\"div[jsname='B34EJ']\")[0]" \
-                                       ".childNodes[0].textContent;"
-                error_msg = driver.execute_script(get_error_msg_script)
-                self.handle_false_email(f"Google error: {error_msg}")
+                self.handle_false_email(Constant.ACCOUNT_PASSWORD_CHANGED_MESSAGE)
             # Selenium failed to type password
             raise ValueError("Selenium failed to type password")
         self.check_challenge()
@@ -235,15 +233,22 @@ class ChromeProfile:
             self.change_password()
             if 'disabled/explanation' in driver.current_url:
                 self.handle_false_email(Constant.ACCOUNT_DISABLED_MESSAGE)
-        # TODO: need handling for 2 more cases
-        # elif 'rejected'/'ootp' in driver.current_url:
-        #     pass
+        elif 'challenge/recaptcha' in driver.current_url:
+            self.handle_false_email(Constant.ACCOUNT_REQUIRED_CAPTCHA_MESSAGE)
+        elif 'signin/rejected' in driver.current_url:
+            self.handle_false_email(Constant.ACCOUNT_REJECTED_MESSAGE)
         elif 'speedbump' in driver.current_url or \
                 'challenge/sk/presend' in driver.current_url or \
-                'challenge/dp' in driver.current_url:
-            # speedbump/idvreenable -> require phone verification ???
-            # challenge/sk/presend -> require phone verification ???
-            # challenge/dp -> select a number ???
+                'challenge/dp' in driver.current_url or \
+                'challenge/ootp' in driver.current_url or \
+                'challenge/ipp' in driver.current_url or \
+                'challenge/iap' in driver.current_url:
+            # speedbump/idvreenable -> require phone verification
+            # challenge/sk/presend -> require phone verification
+            # challenge/dp -> select a number
+            # ootp -> required OTP
+            # ipp -> required OTP
+            # iap -> require phone verification
             self.handle_false_email(Constant.ACCOUNT_VERIFICATION_MESSAGE)
 
     def change_password(self):
