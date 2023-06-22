@@ -91,10 +91,12 @@ class ChromeProfile:
             self.cache_folders.append(os.path.join(path, 'Safe Browsing'))
         options.add_argument("--start-maximized")
         options.add_argument("--disable-notifications")
+        options.add_argument("--disable-popup-blocking")
 
         if self.insecure:
             options.add_argument("--disable-web-security")
             options.add_argument("--allow-running-insecure-content")
+            
         # header = Headers(
         #     browser='chrome'
         # ).generate()
