@@ -126,6 +126,7 @@ class ChromeProfile:
         options.add_extension(ACTIVE)
         options.add_extension(VEEPN)
         options.add_argument("--disable-notifications")
+        options.add_argument("--disable-popup-blocking")
         # if CUSTOM_EXTENSIONS:
         #     for extension in CUSTOM_EXTENSIONS:
         #         options.add_extension(extension)
