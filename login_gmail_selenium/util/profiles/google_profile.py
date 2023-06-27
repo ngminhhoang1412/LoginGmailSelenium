@@ -71,7 +71,6 @@ class GoogleProfile(ChromeProfile):
 
         # Mail address incorrectly typed, this is caused by Selenium itself (I guess), fix not required
         if 'identifier' in driver.current_url:
-            self.handle_false_email("Selenium failed to type username")
             raise ValueError("Selenium failed to type username")
 
         self.check_challenge()
