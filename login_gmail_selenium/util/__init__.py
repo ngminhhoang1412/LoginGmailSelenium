@@ -1,2 +1,2 @@
 from . import helper
-from . import profile
+from . import profiles
