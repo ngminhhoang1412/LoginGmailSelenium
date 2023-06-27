@@ -1,24 +1,13 @@
-from login_gmail_selenium.util.base_profile import ChromeProfile
-import undetected_chromedriver as uc2
-import os
-import shutil
-import login_gmail_selenium.common.constant as Constant
 import selenium.webdriver.support.expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+
+import login_gmail_selenium.common.constant as Constant
 from login_gmail_selenium.common.log import log_false_email
 from login_gmail_selenium.util import helper
-from login_gmail_selenium.util.driver import Driver
-from login_gmail_selenium.util.helper import type_text, sleep_for, ensure_click, \
-    get_version
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.by import By
-
-AUTH_TYPES = [
-    'private',
-    'public',
-    None
-]
+from login_gmail_selenium.util.base_profile import ChromeProfile, AUTH_TYPES
+from login_gmail_selenium.util.helper import type_text, ensure_click
 
 
 class GoogleProfile(ChromeProfile):
@@ -165,7 +154,5 @@ class GoogleProfile(ChromeProfile):
                            f"<{self.email}:{new_password}:{self.backup_email}>")
 
     def start(self):
-        self.adjust_viewport()
         self.check_login_status()
-        sleep_for(Constant.SHORT_WAIT)
-        self.driver.execute_cdp_cmd(cmd='Network.clearBrowserCache', cmd_args={})
+        super().start()

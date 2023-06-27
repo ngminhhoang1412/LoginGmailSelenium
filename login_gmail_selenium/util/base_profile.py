@@ -1,17 +1,12 @@
-import undetected_chromedriver as uc2
 import os
 import shutil
-import login_gmail_selenium.common.constant as Constant
-import selenium.webdriver.support.expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.common.exceptions import TimeoutException, NoSuchElementException
-from login_gmail_selenium.common.log import log_false_email
-from login_gmail_selenium.util import helper
-from login_gmail_selenium.util.driver import Driver
-from login_gmail_selenium.util.helper import type_text, sleep_for, ensure_click, \
-    get_version
+
+import undetected_chromedriver as uc2
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.by import By
+
+import login_gmail_selenium.common.constant as Constant
+from login_gmail_selenium.util.driver import Driver
+from login_gmail_selenium.util.helper import sleep_for, get_version
 
 current_path = os.path.dirname(os.path.abspath(__file__))
 root_path = os.path.dirname(current_path)
@@ -140,7 +135,7 @@ class ChromeProfile:
         return self.driver
 
     def start(self):
-        self.adjust_viewport()
+        # self.adjust_viewport()
         sleep_for(Constant.SHORT_WAIT)
         self.driver.execute_cdp_cmd(cmd='Network.clearBrowserCache', cmd_args={})
 
