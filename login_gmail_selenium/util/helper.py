@@ -1,16 +1,18 @@
-import random
 import math
 import os
-import login_gmail_selenium.common.constant as Constant
-from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import TimeoutException, NoSuchElementException
-from selenium.webdriver.common.by import By
-from time import sleep
-from random import randint, uniform
-import selenium.webdriver.support.expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
+import random
 import secrets
 import string
+from random import randint, uniform
+from time import sleep
+
+import selenium.webdriver.support.expected_conditions as EC
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+
+import login_gmail_selenium.common.constant as Constant
 
 
 def sleep_for(period):

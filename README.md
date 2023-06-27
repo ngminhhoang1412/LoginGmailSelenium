@@ -21,9 +21,11 @@ pip install login_gmail_selenium
 ```
 And then on example.py
 ```pycon
-from login_gmail_selenium.util.profile import ChromeProfile
+from login_gmail_selenium.util.profiles.profile import GoogleProfile
+from login_gmail_selenium.util.profiles.google_profile import Profile
 
-profile = ChromeProfile(email, password, backup_email)
+profile = GoogleProfile(email, password, backup_email)
+# profile = Profile(name_profile) If don't need login to google but save driver
 # To allow downloads add insecure=True to ChromeProfile
 # To handle false email with custom functions, use param false_email_callback
 driver = profile.retrieve_driver()
@@ -41,6 +43,9 @@ Your folder should look like this
     /profiles
         /profile1
         /profile2
+    /blank_profiles
+        /blank_profiles1
+        /blank_profiles2
 /extension
     /custom_extension
         extension1.zip
