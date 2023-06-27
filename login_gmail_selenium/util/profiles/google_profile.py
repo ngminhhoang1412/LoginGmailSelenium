@@ -143,9 +143,9 @@ class GoogleProfile(ChromeProfile):
 
     def handle_false_email(self, text):
         # Raise error, noted the email and exit the flow
+        log_false_email(f"{text}: <{self.email}:{self.password}:{self.backup_email}>")
         if self.false_email_callback is not None:
             self.false_email_callback(self.email, self.password, self.backup_email, text)
-        log_false_email(f"{text}: <{self.email}:{self.password}:{self.backup_email}>")
         raise ValueError(f"{text} ({self.email})")
 
     def change_email_password(self, new_password):
